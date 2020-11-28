@@ -10,7 +10,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
-from DataBase.workFromDB import db
+from DataBase.workFromDB import db  # Импортируем работу с базой данных
+#  Импорт всех нужных библиотек, стилей
 
 
 class shopWindow(QtWidgets.QWidget):

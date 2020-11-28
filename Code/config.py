@@ -1,5 +1,5 @@
-backgroundMain = "1200px-Triangle-blue.svg (1).png"
-backgroundSide = "1200px-Triangle-blue.svg.jpg"
+backgroundMain = "backgroundMain.png"
+backgroundSide = "backgroundSide.jpg"
 
 buttonAuth = """
         QPushButton{background-color: white;
