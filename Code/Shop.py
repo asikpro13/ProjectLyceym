@@ -9,6 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QTableWidgetItem
+from DataBase.workFromDB import db
 
 
 class shopWindow(QtWidgets.QWidget):
@@ -22,7 +24,7 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
         self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
         self.buttonForDelProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для удаления продукта(only admin)
-        if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления
+        if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
             self.buttonForAddProduct.hide()
             self.buttonForDelProduct.hide()
         self.buttonForCreateCheck = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
@@ -57,6 +59,7 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(3, QtWidgets.QTableWidgetItem('НАЗВАНИЕ'))
         self.tableWidget.setHorizontalHeaderItem(4, QtWidgets.QTableWidgetItem('ЦЕНА'))
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
+        self.updateTable()
         self.label.setGeometry(QtCore.QRect(30, 80, 120, 20))
         self.label.setObjectName("label")
 
@@ -74,6 +77,14 @@ class shopWindow(QtWidgets.QWidget):
 
     def addProductWindow(self):
         pass
+
+    def updateTable(self):
+        res = db('select * from product')
+        for i, row in enumerate(res):
+            self.tableWidget.setRowCount(
+                self.tableWidget.rowCount() + 1)
+            for j, elem in enumerate(row):
+                self.tableWidget.setItem(i, j, QTableWidgetItem(str(elem)))
 
     def resizeEvent(self, Event):
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5), self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
