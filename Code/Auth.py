@@ -27,13 +27,14 @@ class AuthWindow(QDialog):
         self.lineEditForPassword = QLineEdit(self)
         self.buttonForAuth = QPushButton(self)
         self.id = QLabel(self)
+        self.setFixedSize(400, 439)
         self.Auth()
 
     def Auth(self):
         self.setWindowTitle('Авторизация')
         self.setObjectName("")
-        self.setFixedSize(400, 439)
-        self.labelAuth.setGeometry(QRect(self.width() // 2 - self.labelAuth.width(), 10, 231, 151))
+        self.labelAuth.setGeometry(QRect(self.width() // 2 - self.labelAuth.width(), 10, 231, 151))  # -.
+        # Изменяем размер надписи
         self.font = QFont()
         self.font.setFamily("Roboto Light")
         self.font.setPointSize(22)
