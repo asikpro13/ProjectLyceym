@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QFrame
-from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QFrame, QDialog, QVBoxLayout
+from PyQt5.QtCore import Qt, QRect, QMetaObject, QCoreApplication
 from PyQt5.QtGui import QFont
+# Импортируем специальные библиотеки
 from Code.ButtonsForWindow import MyBar
 from DataBase.workFromDB import db
+# Импортируем настройки стилей
 
 
-class RegistrationWindow(QtWidgets.QDialog):
+class RegistrationWindow(QDialog):
     def __init__(self, root):
         self.root = root
         self.root.setEnabled(False)
         super(RegistrationWindow, self).__init__()
-        self.layout = QtWidgets.QVBoxLayout()
+        self.layout = QVBoxLayout()
         self.layout.addWidget(MyBar(self))
         self.setLayout(self.layout)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -52,7 +53,7 @@ class RegistrationWindow(QtWidgets.QDialog):
         self.buttonForRegistr.move(self.width() // 2 - self.buttonForRegistr.width() // 2, 370)
         self.buttonForRegistr.clicked.connect(self.reg)
         self.retranslateUi()
-        QtCore.QMetaObject.connectSlotsByName(self)
+        QMetaObject.connectSlotsByName(self)
 
     def reg(self):
         result = db("select * from Auth where login = ? and password = ?", (self.lineEditForLogin.text(), self.lineEditForPassword.text(),))
@@ -72,7 +73,7 @@ class RegistrationWindow(QtWidgets.QDialog):
         self.root.setEnabled(True)
 
     def retranslateUi(self):
-        _translate = QtCore.QCoreApplication.translate
+        _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("Form", "Регистрация"))
         self.labelRegistr.setText(_translate("", "Регистрация"))
         self.labelLogin.setText(_translate("", "Логин"))
