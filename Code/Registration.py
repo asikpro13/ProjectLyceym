@@ -10,9 +10,9 @@ from DataBase.workFromDB import db
 
 class RegistrationWindow(QDialog):
     def __init__(self, root):
-        self.root = root
-        self.root.setEnabled(False)
-        super(RegistrationWindow, self).__init__()
+        self.root = root  # Создаем экземпляр родительского окна
+        self.root.setEnabled(False)  # Делаем окно не активным
+        super(RegistrationWindow, self).__init__()  # Инициализация
         self.layout = QVBoxLayout()
         self.layout.addWidget(MyBar(self))
         self.setLayout(self.layout)
