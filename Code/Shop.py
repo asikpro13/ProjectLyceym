@@ -37,37 +37,42 @@ class shopWindow(QtWidgets.QWidget):
     def setupUi(self):  # Основной метод
         #  Все кнопки создаются по мере работы, а не в инициализации т.к. после инициализации кнопки не хотят работать
         self.setObjectName("Form")
-        self.buttonForLK.setGeometry(QtCore.QRect(730, 30, 120, 28))
+        self.buttonForLK.setGeometry(QtCore.QRect(730, 30, 120, 28))  # Изменяем геометрию кнопки для ЛК
         self.buttonForLK.setObjectName("pushButton")
-        self.buttonForLK.clicked.connect(self.addProductWindow)
+        self.buttonForLK.clicked.connect(self.addProductWindow)  # Коннект функции к кнопке
         self.buttonForAddProduct.setGeometry(QtCore.QRect(20, 30, 131, 28))
+        # Изменяем геометрию кнопки для создания продукта
         self.buttonForAddProduct.setObjectName("pushButton_2")
         self.buttonForDelProduct.setGeometry(QtCore.QRect(260, 30, 130, 28))
+        # Изменяем геометрию кнопки для удаления продукта
         self.buttonForDelProduct.setObjectName("pushButton_5")
         self.buttonForCreateCheck.setGeometry(QtCore.QRect(510, 30, 110, 28))
+        # Изменяем геометрию кнопки для создания чека
         self.buttonForCreateCheck.setObjectName("pushButton_6")
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
+        #  Изменяем геометрию поля с поиском
         self.lineEditForSearch.setObjectName("lineEdit")
         self.tableWidget.setGeometry(QtCore.QRect(20, 110, 831, 621))
-        self.tableWidget.resize(831, 621)  # изменяем размер таблицы
+        #  Изменяем геометрию таблицы
+        self.tableWidget.resize(831, 621)  # Изменяем размер таблицы
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(0)
-        self.tableWidget.setRowCount(0)
-        self.tableWidget.setColumnCount(6)
+        self.tableWidget.setRowCount(0)  # Очищаем все строки в таблице
+        self.tableWidget.setColumnCount(6)  # Изменяем количество столбцов
         self.tableWidget.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ID'))
         self.tableWidget.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('ФОТО'))
         self.tableWidget.setHorizontalHeaderItem(2, QtWidgets.QTableWidgetItem('БРЕНД'))
         self.tableWidget.setHorizontalHeaderItem(3, QtWidgets.QTableWidgetItem('НАЗВАНИЕ'))
         self.tableWidget.setHorizontalHeaderItem(4, QtWidgets.QTableWidgetItem('ЦЕНА'))
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
-        self.updateTable()
-        self.label.setGeometry(QtCore.QRect(30, 80, 120, 20))
+        #  Изменяем названия столбцов
+        self.updateTable()  # Запускаем функцию обновления таблицы
+        self.label.setGeometry(QtCore.QRect(30, 80, 120, 20))  # Изменяем геометрию надписи
         self.label.setObjectName("label")
 
-        self.retranslateUi()
+        self.retranslateUi()  # Специальная функция от qt для переименовывания названий объектов
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self):
+    def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("Form", "Касса"))
         self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
@@ -75,6 +80,7 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForDelProduct.setText(_translate("Form", "удалить продукт"))
         self.buttonForCreateCheck.setText(_translate("Form", "Выписать чек"))
         self.label.setText(_translate("Form", "Поиск продукта:"))
+    # Изменяем текст в объетках по смыслу
 
     def addProductWindow(self):
         pass
@@ -87,7 +93,7 @@ class shopWindow(QtWidgets.QWidget):
             for j, elem in enumerate(row):
                 self.tableWidget.setItem(i, j, QTableWidgetItem(str(elem)))
 
-    def resizeEvent(self, Event):
+    def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5), self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
         self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2, self.tableWidget.y())
         self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140, self.lineEditForSearch.height())

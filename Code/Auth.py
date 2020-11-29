@@ -6,8 +6,8 @@ from DataBase.workFromDB import db
 from PyQt5.QtGui import QFont
 
 
-class AuthWindow(QDialog):
-    def __init__(self, root):
+class AuthWindow(QDialog):  # Окно авторизации
+    def __init__(self, root):  # Инициализация
         self.root = root
         self.root.setEnabled(False)
         super(AuthWindow, self).__init__()
@@ -29,8 +29,10 @@ class AuthWindow(QDialog):
         self.id = QLabel(self)
         self.setFixedSize(400, 439)
         self.Auth()
+        #  Создаем объект дочернего окна, создаем кастомные титульные кнопки, создаем надписи, поля для ввода
+        #  Изменяем размер окна и вызываем основной метод
 
-    def Auth(self):
+    def Auth(self):  # Основной метод
         self.setWindowTitle('Авторизация')
         self.setObjectName("")
         self.labelAuth.setGeometry(QRect(self.width() // 2 - self.labelAuth.width(), 10, 231, 151))  # -.
@@ -58,13 +60,17 @@ class AuthWindow(QDialog):
         self.buttonForAuth.move(self.width() // 2 - self.buttonForAuth.width() // 2, 370)
         self.retranslateUi()
 
-    def check(self):
-        result = db("select * from Auth where login = ? and password = ?", (self.lineEditForLogin.text(), self.lineEditForPassword.text(),))
+        # В основном методе изменемяем название окна, создаем надписи, меняем шрифт
+
+    def check(self):  # Функция проверки
+        result = db("select * from Auth where login = ? and password = ?",
+                    (self.lineEditForLogin.text(), self.lineEditForPassword.text(),))
         if len(result) > 0:
             self.root.close()
             self.id.setText(str(result[0][-1]))
             self.shopWind()
             self.close()
+            # Пропускаем
         else:
             self.labelWarAuth.setText('Такого пользователя или пароля не существует')
             self.font.setPointSize(8)
@@ -73,17 +79,19 @@ class AuthWindow(QDialog):
             self.labelWarAuth.setStyleSheet('color: red')
             self.labelWarAuth.move(self.width() // 2 - self.labelWarAuth.width() // 2, 190)
             self.labelWarAuth.show()
+            # Выводим ошибку
 
-    def shopWind(self):
+    def shopWind(self):  # Функция дла показа окна с магазином
         self.Wind = shopWindow(self)
         self.Wind.show()
 
-    def closeEvent(self, Event):
-        self.root.setEnabled(True)
+    def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
+        self.root.setEnabled(True)  # Говорим окну продолжить работу
 
-    def retranslateUi(self):
+    def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("", "Авторизация"))
         self.labelAuth.setText(_translate("", "Авторизация"))
         self.labelLogin.setText(_translate("", "Логин"))
         self.labelPassword.setText(_translate("", "Пароль"))
+    #  Изменяем текст в объетках по смыслу
