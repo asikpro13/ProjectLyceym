@@ -52,6 +52,7 @@ class shopWindow(QtWidgets.QWidget):
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
         #  Изменяем геометрию поля с поиском
         self.lineEditForSearch.setObjectName("lineEdit")
+        self.lineEditForSearch.textChanged.connect(self.changeSearchProduct)
         self.tableWidget.setGeometry(QtCore.QRect(20, 110, 831, 621))
         #  Изменяем геометрию таблицы
         self.tableWidget.resize(831, 621)  # Изменяем размер таблицы
@@ -82,6 +83,18 @@ class shopWindow(QtWidgets.QWidget):
         self.label.setText(_translate("Form", "Поиск продукта:"))
     # Изменяем текст в объетках по смыслу
 
+    def changeSearchProduct(self):
+        res = db('select * from product where product_brand like ? or product_name like ?',
+                 ('%' + str(self.lineEditForSearch.text()) + '%', '%' + str(self.lineEditForSearch.text()) + '%',))
+        self.tableWidget.setRowCount(0)
+        for i, row in enumerate(res):
+            self.tableWidget.setRowCount(
+                self.tableWidget.rowCount() + 1)
+            for j, elem in enumerate(row):
+                s = QTableWidgetItem(str(elem))
+                s.setFlags(QtCore.Qt.ItemIsEditable)
+                self.tableWidget.setItem(i, j, s)
+
     def addProductWindow(self):
         pass
 
@@ -91,7 +104,9 @@ class shopWindow(QtWidgets.QWidget):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
             for j, elem in enumerate(row):
-                self.tableWidget.setItem(i, j, QTableWidgetItem(str(elem)))
+                s = QTableWidgetItem(str(elem))
+                s.setFlags(QtCore.Qt.ItemIsEditable)
+                self.tableWidget.setItem(i, j, s)
 
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5), self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
