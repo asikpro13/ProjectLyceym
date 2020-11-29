@@ -32,6 +32,7 @@ class shopWindow(QtWidgets.QWidget):
         self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
         self.tableWidget = QtWidgets.QTableWidget(self)  # Создаем таблицу
         self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
+        self.warning = QtWidgets.QLabel(self)
         self.setupUi()  # Вызов метода с основной работой
 
     def setupUi(self):  # Основной метод
@@ -58,14 +59,21 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.resize(831, 621)  # Изменяем размер таблицы
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setRowCount(0)  # Очищаем все строки в таблице
-        self.tableWidget.setColumnCount(6)  # Изменяем количество столбцов
+        self.tableWidget.setColumnCount(7)  # Изменяем количество столбцов
         self.tableWidget.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ID'))
         self.tableWidget.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('ФОТО'))
         self.tableWidget.setHorizontalHeaderItem(2, QtWidgets.QTableWidgetItem('БРЕНД'))
         self.tableWidget.setHorizontalHeaderItem(3, QtWidgets.QTableWidgetItem('НАЗВАНИЕ'))
         self.tableWidget.setHorizontalHeaderItem(4, QtWidgets.QTableWidgetItem('ЦЕНА'))
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
+        self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
+        self.tableWidget.cellChanged.connect(self.checkCount)
+        self.warning.setText('Предупреждение')
+        self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
+        self.warning.hide()
         #  Изменяем названия столбцов
+        self.font = QtGui.QFont()  # Создаем объект шрифта
+        self.font.setFamily("Roboto Light")  # Изменяем семейство шрифта
         self.updateTable()  # Запускаем функцию обновления таблицы
         self.label.setGeometry(QtCore.QRect(30, 80, 120, 20))  # Изменяем геометрию надписи
         self.label.setObjectName("label")
@@ -82,6 +90,34 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForCreateCheck.setText(_translate("Form", "Выписать чек"))
         self.label.setText(_translate("Form", "Поиск продукта:"))
     # Изменяем текст в объетках по смыслу
+
+    def checkCount(self, row, column):
+        if column >= 6:
+            try:
+                if int(self.tableWidget.item(row, column - 1).text()) < int(self.tableWidget.item(row, column).text()) \
+                        or int(self.tableWidget.item(row, column).text()) < 0:
+                    raise TypeError
+                self.font.setBold(False)
+                self.tableWidget.item(row, column).setFont(self.font)
+                self.tableWidget.item(row, column).setForeground(QtGui.QColor(0, 0, 0))
+                self.warning.hide()
+                self.buttonForCreateCheck.setEnabled(True)
+            except TypeError:
+                self.font.setBold(True)  # Изменяем ширину шрифта
+                self.warning.setText('Ошибка данных')
+                self.tableWidget.item(row, column).setFont(self.font)
+                self.tableWidget.item(row, column).setForeground(QtGui.QColor(255, 0, 0))
+                self.buttonForCreateCheck.setEnabled(False)
+                self.warning.show()
+            except ValueError:
+                self.font.setBold(True)  # Изменяем ширину шрифта
+                self.warning.setText('Ошибка данных')
+                self.tableWidget.item(row, column).setFont(self.font)
+                self.tableWidget.item(row, column).setForeground(QtGui.QColor(255, 0, 0))
+                self.buttonForCreateCheck.setEnabled(False)
+                self.warning.show()
+            except AttributeError:
+                pass
 
     def changeSearchProduct(self):
         res = db('select * from product where product_brand like ? or product_name like ?',
@@ -107,9 +143,12 @@ class shopWindow(QtWidgets.QWidget):
                 s = QTableWidgetItem(str(elem))
                 s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidget.setItem(i, j, s)
+            s = QTableWidgetItem('0')
+            self.tableWidget.setItem(i, j + 1, s)
 
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5), self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
         self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2, self.tableWidget.y())
         self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140, self.lineEditForSearch.height())
         self.lineEditForSearch.move(self.width() // 2 - self.lineEditForSearch.width() // 2 + 70, self.lineEditForSearch.y())
+        self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
