@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
+from Code.DelProduct import DelWindow
 from DataBase.workFromDB import db  # Импортируем работу с базой данных
 #  Импорт всех нужных библиотек, стилей
 
@@ -47,6 +48,7 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForDelProduct.setGeometry(QtCore.QRect(260, 30, 130, 28))
         # Изменяем геометрию кнопки для удаления продукта
         self.buttonForDelProduct.setObjectName("pushButton_5")
+        self.buttonForDelProduct.clicked.connect(self.delProductWindow)
         self.buttonForCreateCheck.setGeometry(QtCore.QRect(510, 30, 110, 28))
         # Изменяем геометрию кнопки для создания чека
         self.buttonForCreateCheck.setObjectName("pushButton_6")
@@ -133,6 +135,10 @@ class shopWindow(QtWidgets.QWidget):
 
     def addProductWindow(self):
         pass
+
+    def delProductWindow(self):
+        self.DelWind = DelWindow(self)  # создаем объект для работы с окном из другого файла и инициализируем его
+        self.DelWind.show()
 
     def updateTable(self):
         res = db('select * from product')
