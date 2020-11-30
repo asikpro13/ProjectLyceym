@@ -20,7 +20,9 @@ class DelWindow(QDialog):  # Окно авторизации
         self.pressing = False
         self.labelDel = QLabel(self)
         self.buttonForDeleteProduct = QPushButton(self)
+        self.labelid = QLabel(self)
         self.lineForDeleteProduct = QLineEdit(self)
+        self.labelWarAuth = QLabel(self)
 
         self.setFixedSize(400, 439)
         self.Del()
@@ -36,24 +38,25 @@ class DelWindow(QDialog):  # Окно авторизации
         self.labelDel.setFont(self.font)
         self.labelDel.setFrameShadow(QFrame.Plain)
         self.labelDel.setObjectName("label")
+        self.buttonForDeleteProduct.clicked.connect(self.check)
         self.retranslateUi()
+        self.labelid.setText('id товара')
+        self.labelid.move(self.width() // 2 - self.lineForDeleteProduct.width() // 2 - 80, self.height() // 2)
         self.labelDel.move(self.width() // 2 - self.labelDel.width() // 2, 5)
         self.lineForDeleteProduct.move(self.width() // 2 - self.lineForDeleteProduct.width() // 2, self.height() // 2)
         self.buttonForDeleteProduct.move(self.width() // 2 - self.buttonForDeleteProduct.width() // 2, self.height() // 2 + 100)
-
         # В основном методе изменемяем название окна, создаем надписи, меняем шрифт
 
     def check(self):  # Функция проверки
-        result = db("select * from Auth where login = ? and password = ?",
-                    (self.lineEditForLogin.text(), self.lineEditForPassword.text(),))
+        result = db("select * from product where product_id = ?",
+                    (self.lineForDeleteProduct.text(),))
         if len(result) > 0:
-            self.root.close()
-            self.id.setText(str(result[0][-1]))
-            self.shopWind()
+            db('delete from product where product_id = ?', (self.lineForDeleteProduct.text(),))
+
             self.close()
             # Пропускаем
         else:
-            self.labelWarAuth.setText('Такого пользователя или пароля не существует')
+            self.labelWarAuth.setText('Такого товара не существует')
             self.font.setPointSize(8)
             self.labelWarAuth.setFont(self.font)
             self.labelWarAuth.adjustSize()
@@ -64,6 +67,7 @@ class DelWindow(QDialog):  # Окно авторизации
 
     def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
+        self.root.updateTable()
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QCoreApplication.translate

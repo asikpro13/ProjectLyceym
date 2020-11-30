@@ -141,6 +141,7 @@ class shopWindow(QtWidgets.QWidget):
         self.DelWind.show()
 
     def updateTable(self):
+        self.tableWidget.setRowCount(0)
         res = db('select * from product')
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
