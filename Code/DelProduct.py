@@ -52,7 +52,6 @@ class DelWindow(QDialog):  # Окно авторизации
                     (self.lineForDeleteProduct.text(),))
         if len(result) > 0:
             db('delete from product where product_id = ?', (self.lineForDeleteProduct.text(),))
-
             self.close()
             # Пропускаем
         else:
