@@ -27,6 +27,10 @@ class addProductWindow(QtWidgets.QDialog):
         self.pushButton.setGeometry(QtCore.QRect(130, 450, 93, 28))
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.createProduct)
+        self.warning = QtWidgets.QLabel(self)
+        self.warning.setText('Ошибка')
+        self.warning.hide()
+        self.warning.move(self.width() // 2 - self.warning.width() // 2, 5)
         self.label = QtWidgets.QLabel(self)
         self.label.setGeometry(QtCore.QRect(70, 280, 55, 16))
         self.label.setObjectName("label")
@@ -76,7 +80,6 @@ class addProductWindow(QtWidgets.QDialog):
 
     def addPhoto(self):
         self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара', filter='Файлы изображений (*.png *.jpg *.bmp)')
-
         self.label_6.move(20, 70)
         self.pixmap = QtGui.QPixmap(self.fname)
         self.pixmap = self.pixmap.scaled(QtCore.QSize(150, 200))
@@ -84,9 +87,16 @@ class addProductWindow(QtWidgets.QDialog):
         self.label_6.setPixmap(self.pixmap)
 
     def createProduct(self):
-        shutil.copy(self.fname, '../Image/DBImage')
-
-        db
+        try:
+            shutil.copy(self.fname, '../Image/DBImage')
+            name = self.fname[self.fname.rfind('/') + 1:]
+            # open('../Image/DBImage' + name) # Путь
+            db('INSERT INTO product (product_photo, product_brand, product_name, product_price, product_count) VALUES (?, ?, ?, ?, ?)', ('../Image/DBImage' + name, self.lineEdit.text(), self.lineEdit_2.text(), self.spinBox.text(), self.spinBox_2.text(),))
+            self.close()
+        except FileNotFoundError:
+            self.warning.show()
+        except AttributeError:
+            self.warning.show()
 
     def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
