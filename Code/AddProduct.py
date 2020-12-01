@@ -9,6 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from DataBase.workFromDB import db
+import shutil
 
 
 class addProductWindow(QtWidgets.QDialog):
@@ -24,6 +26,7 @@ class addProductWindow(QtWidgets.QDialog):
         self.pushButton = QtWidgets.QPushButton(self)
         self.pushButton.setGeometry(QtCore.QRect(130, 450, 93, 28))
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.clicked.connect(self.createProduct)
         self.label = QtWidgets.QLabel(self)
         self.label.setGeometry(QtCore.QRect(70, 280, 55, 16))
         self.label.setObjectName("label")
@@ -49,7 +52,7 @@ class addProductWindow(QtWidgets.QDialog):
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
         self.pushButton_2 = QtWidgets.QPushButton(self)
-        self.pushButton_2.setGeometry(QtCore.QRect(110, 80, 150, 150))
+        self.pushButton_2.setGeometry(QtCore.QRect(190, 100, 150, 150))
         self.pushButton_2.setStyleSheet("QPushButton{\n"
                                         "border-style: solid;\n"
                                         "border-width: 1px;\n"
@@ -58,6 +61,7 @@ class addProductWindow(QtWidgets.QDialog):
                                         "QPushButton:pressed{\n"
                                         "background-color: rgb(200, 200, 200);}")
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.clicked.connect(self.addPhoto)
         self.spinBox = QtWidgets.QSpinBox(self)
         self.spinBox.setGeometry(QtCore.QRect(150, 400, 141, 22))
         self.spinBox.setMaximum(1000000000)
@@ -66,9 +70,23 @@ class addProductWindow(QtWidgets.QDialog):
         self.spinBox_2.setGeometry(QtCore.QRect(150, 360, 141, 22))
         self.spinBox_2.setMaximum(1000000000)
         self.spinBox_2.setObjectName("spinBox_2")
-
+        self.label_6 = QtWidgets.QLabel(self)
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
+
+    def addPhoto(self):
+        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара', filter='Файлы изображений (*.png *.jpg *.bmp)')
+
+        self.label_6.move(20, 70)
+        self.pixmap = QtGui.QPixmap(self.fname)
+        self.pixmap = self.pixmap.scaled(QtCore.QSize(150, 200))
+        self.label_6.resize(150, 200)
+        self.label_6.setPixmap(self.pixmap)
+
+    def createProduct(self):
+        shutil.copy(self.fname, '../Image/DBImage')
+
+        db
 
     def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
