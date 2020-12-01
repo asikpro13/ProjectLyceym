@@ -64,6 +64,7 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
         self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
         self.tableWidget.cellChanged.connect(self.checkCount)
+        self.tableWidget.setColumnWidth(1, 200)
         self.warning.setText('Предупреждение')
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
         self.warning.hide()
@@ -144,6 +145,11 @@ class shopWindow(QtWidgets.QWidget):
             for j, elem in enumerate(row):
                 s = QTableWidgetItem(str(elem))
                 s.setFlags(QtCore.Qt.ItemIsEditable)
+                if j == 1:
+                    brush = QtGui.QBrush(QtGui.QPixmap('../Image/DBImage/1200px-Triangle-blue.svg.png').scaled(200, 200))
+                    self.tableWidget.setRowHeight(i, 200)
+                    s.setText('')
+                    s.setBackground(brush)
                 self.tableWidget.setItem(i, j, s)
             s = QTableWidgetItem('0')
             self.tableWidget.setItem(i, j + 1, s)
