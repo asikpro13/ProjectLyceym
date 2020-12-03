@@ -76,6 +76,7 @@ class shopWindow(QtWidgets.QWidget):
         self.label.setObjectName("label")
 
         self.retranslateUi()  # Специальная функция от qt для переименовывания названий объектов
+        self.buttonForCreateCheck.adjustSize()
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
@@ -84,7 +85,7 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
         self.buttonForAddProduct.setText(_translate("Form", "Добавить продукт"))
         self.buttonForDelProduct.setText(_translate("Form", "удалить продукт"))
-        self.buttonForCreateCheck.setText(_translate("Form", "Выписать чек"))
+        self.buttonForCreateCheck.setText(_translate("Form", "Совершить покупку"))
         self.label.setText(_translate("Form", "Поиск продукта:"))
     # Изменяем текст в объетках по смыслу
 

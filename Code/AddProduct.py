@@ -104,7 +104,7 @@ class addProductWindow(QtWidgets.QDialog):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Form", "Form"))
+        self.setWindowTitle(_translate("Form", "Добавление продукта"))
         self.pushButton.setText(_translate("Form", "Создать"))
         self.label.setText(_translate("Form", "Бренд"))
         self.label_2.setText(_translate("Form", "Модель"))
