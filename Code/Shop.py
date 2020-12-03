@@ -49,7 +49,7 @@ class shopWindow(QtWidgets.QWidget):
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
         #  Изменяем геометрию поля с поиском
         self.lineEditForSearch.setObjectName("lineEdit")
-        self.lineEditForSearch.textChanged.connect(self.changeSearchProduct)
+        self.lineEditForSearch.textChanged.connect(self.updateTable)
         self.tableWidget.setGeometry(QtCore.QRect(20, 110, 831, 621))
         #  Изменяем геометрию таблицы
         self.tableWidget.resize(831, 621)  # Изменяем размер таблицы
@@ -116,18 +116,6 @@ class shopWindow(QtWidgets.QWidget):
             except AttributeError:
                 pass
 
-    def changeSearchProduct(self):
-        res = db('select * from product where product_brand like ? or product_name like ?',
-                 ('%' + str(self.lineEditForSearch.text()) + '%', '%' + str(self.lineEditForSearch.text()) + '%',))
-        self.tableWidget.setRowCount(0)
-        for i, row in enumerate(res):
-            self.tableWidget.setRowCount(
-                self.tableWidget.rowCount() + 1)
-            for j, elem in enumerate(row):
-                s = QTableWidgetItem(str(elem))
-                s.setFlags(QtCore.Qt.ItemIsEditable)
-                self.tableWidget.setItem(i, j, s)
-
     def openAddProductWindow(self):
         self.addWind = addProductWindow(self)
         self.addWind.show()
@@ -138,18 +126,22 @@ class shopWindow(QtWidgets.QWidget):
 
     def updateTable(self):
         self.tableWidget.setRowCount(0)
+        request = self.lineEditForSearch.text()
+        res = db('select * from product where product_brand like ? or product_name like ?',
+                 ('%' + str(request) + '%', '%' + str(request) + '%',))
         res = db('select * from product')
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
             for j, elem in enumerate(row):
                 s = QTableWidgetItem(str(elem))
-                s.setFlags(QtCore.Qt.ItemIsEditable)
                 if j == 1:
                     brush = QtGui.QBrush(QtGui.QPixmap('../Image/DBImage/1200px-Triangle-blue.svg.png').scaled(200, 200))
                     self.tableWidget.setRowHeight(i, 200)
                     s.setText('')
                     s.setBackground(brush)
+                if j == 0:
+                    s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidget.setItem(i, j, s)
             s = QTableWidgetItem('0')
             self.tableWidget.setItem(i, j + 1, s)
