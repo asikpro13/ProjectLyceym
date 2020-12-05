@@ -38,7 +38,6 @@ class DelWindow(QDialog):  # Окно авторизации
 
     def delProduct(self):
         print('s')
-        s
 
     def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
