@@ -64,8 +64,8 @@ class AuthWindow(QDialog):  # Окно авторизации
         # В основном методе изменемяем название окна, создаем надписи, меняем шрифт
 
     def check(self):  # Функция проверки
-        result = db("select * from Auth where login = ? and password = ?",
-                    (self.lineEditForLogin.text(), self.lineEditForPassword.text(),))
+        self.db = db()
+        result = self.db.auth(self.lineEditForLogin.text(), self.lineEditForPassword.text())
         if len(result) > 0:
             self.root.close()
             self.id.setText(str(result[0][-1]))

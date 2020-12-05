@@ -133,6 +133,8 @@ class shopWindow(QtWidgets.QWidget):
         self.delWind.show()
 
     def clickedRowColumn(self, r, c):
+        self.row = r
+        self.column = c
         print("{}: row={}, column={}".format(self.tableWidget.mouse_press, r, c))
 
     def updateTable(self):
