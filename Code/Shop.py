@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 from PyQt5.QtWidgets import QTableWidgetItem
 from Code.DelProduct import DelWindow
 from Code.AddProduct import addProductWindow
@@ -8,23 +8,33 @@ from DataBase.workFromDB import db  # Импортируем работу с б�
 #  Импорт всех нужных библиотек, стилей
 
 
+class TableWidget(QtWidgets.QTableWidget):
+    def __init__(self, root):
+        self.root = root  # Создаем экземпляр родительского окна
+        super(TableWidget, self).__init__(root)
+        self.mouse_press = None
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.RightButton:
+            shopWindow.openDelProductWindow(self.root)
+        super(TableWidget, self).mousePressEvent(event)
+
+
 class shopWindow(QtWidgets.QWidget):
     def __init__(self, root):
-        super(shopWindow, self).__init__()
         self.root = root  # Создаем экземпляр родительского окна
         self.id = root.id.text()  # Получаем параметр админ/не админ от родительского окна
+        super(shopWindow, self).__init__()
         self.resize(869, 746)  # Изменяем размер окна
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
         self.setMinimumHeight(self.height())  # Изменяем минимальную высоту окна
         self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
         self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
-        self.buttonForDelProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для удаления продукта(only admin)
         if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
             self.buttonForAddProduct.hide()
-            self.buttonForDelProduct.hide()
         self.buttonForCreateCheck = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
         self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
-        self.tableWidget = QtWidgets.QTableWidget(self)  # Создаем таблицу
+        self.tableWidget = TableWidget(self)  # Создаем таблицу
         self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
         self.warning = QtWidgets.QLabel(self)
         self.setupUi()  # Вызов метода с основной работой
@@ -39,10 +49,7 @@ class shopWindow(QtWidgets.QWidget):
         # Изменяем геометрию кнопки для создания продукта
         self.buttonForAddProduct.setObjectName("pushButton_2")
         self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
-        self.buttonForDelProduct.setGeometry(QtCore.QRect(260, 30, 130, 28))
         # Изменяем геометрию кнопки для удаления продукта
-        self.buttonForDelProduct.setObjectName("pushButton_5")
-        self.buttonForDelProduct.clicked.connect(self.delProductWindow)
         self.buttonForCreateCheck.setGeometry(QtCore.QRect(510, 30, 110, 28))
         # Изменяем геометрию кнопки для создания чека
         self.buttonForCreateCheck.setObjectName("pushButton_6")
@@ -63,8 +70,9 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(4, QtWidgets.QTableWidgetItem('ЦЕНА'))
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
         self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
-        self.tableWidget.cellChanged.connect(self.checkCount)
         self.tableWidget.setColumnWidth(1, 200)
+        self.tableWidget.cellPressed[int, int].connect(self.clickedRowColumn)
+
         self.warning.setText('Предупреждение')
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
         self.warning.hide()
@@ -84,7 +92,6 @@ class shopWindow(QtWidgets.QWidget):
         self.setWindowTitle(_translate("Form", "Касса"))
         self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
         self.buttonForAddProduct.setText(_translate("Form", "Добавить продукт"))
-        self.buttonForDelProduct.setText(_translate("Form", "удалить продукт"))
         self.buttonForCreateCheck.setText(_translate("Form", "Совершить покупку"))
         self.label.setText(_translate("Form", "Поиск продукта:"))
     # Изменяем текст в объетках по смыслу
@@ -121,9 +128,12 @@ class shopWindow(QtWidgets.QWidget):
         self.addWind = addProductWindow(self)
         self.addWind.show()
 
-    def delProductWindow(self):
+    def openDelProductWindow(self):
         self.delWind = DelWindow(self)  # создаем объект для работы с окном из другого файла и инициализируем его
         self.delWind.show()
+
+    def clickedRowColumn(self, r, c):
+        print("{}: row={}, column={}".format(self.tableWidget.mouse_press, r, c))
 
     def updateTable(self):
         self.tableWidget.setRowCount(0)

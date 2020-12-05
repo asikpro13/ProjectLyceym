@@ -54,6 +54,7 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.lineEditForPassword.setGeometry(QRect(60, 320, 271, 30))
         self.lineEditForPassword.setObjectName("lineEdit_2")
         self.lineEditForPassword.setEchoMode(QLineEdit.Password)
+        self.lineEditForPassword.returnPressed.connect(self.check)
         self.buttonForAuth.clicked.connect(self.check)
         self.buttonForAuth.setText('Авторизироваться')
         self.buttonForAuth.resize(130, 30)

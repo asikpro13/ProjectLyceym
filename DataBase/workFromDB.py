@@ -1,7 +1,7 @@
 import sqlite3  # Работа с бд
 #  Импорт всех нужных библиотек, стилей
 
-
+# class db():
 def db(zapr, *args):  # Функция для работы с базой данных.
     connect = sqlite3.connect('../DataBase/auth.db')  # Создаем соединение
     cun = connect.cursor()  # Создаем курсор

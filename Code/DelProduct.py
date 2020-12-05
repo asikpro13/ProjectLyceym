@@ -15,54 +15,29 @@ class DelWindow(QDialog):  # Окно авторизации
         self.setLayout(self.layout)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addStretch(-1)
-        self.setMinimumSize(800, 400)
+        self.setMinimumSize(288, 258)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
-        self.labelDel = QLabel(self)
-        self.buttonForDeleteProduct = QPushButton(self)
-        self.labelid = QLabel(self)
-        self.lineForDeleteProduct = QLineEdit(self)
-        self.labelWarAuth = QLabel(self)
-
-        self.setFixedSize(400, 439)
-        self.Del()
+        self.delUI()
         #  Создаем объект дочернего окна, создаем кастомные титульные кнопки, создаем надписи, поля для ввода
         #  Изменяем размер окна и вызываем основной метод
 
-    def Del(self):  # Основной метод
-        self.setWindowTitle('Удаление товара')
-        self.setObjectName("")
-        self.font = QFont()
-        self.font.setFamily("Roboto Light")
-        self.font.setPointSize(22)
-        self.labelDel.setFont(self.font)
-        self.labelDel.setFrameShadow(QFrame.Plain)
-        self.labelDel.setObjectName("label")
-        self.buttonForDeleteProduct.clicked.connect(self.check)
+    def delUI(self):  # Основной метод
+        self.label = QLabel(self)
+        self.label.setGeometry(QRect(60, 70, 181, 16))
+        self.label.setObjectName("label")
+        self.ok = QPushButton(self)
+        self.ok.setGeometry(QRect(50, 160, 75, 23))
+        self.ok.setObjectName("pushButton")
+        self.ok.clicked.connect(self.delProduct)
+        self.cancel = QPushButton(self)
+        self.cancel.setGeometry(QRect(160, 160, 75, 23))
+        self.cancel.setObjectName("pushButton_2")
+        self.cancel.clicked.connect(self.close)
         self.retranslateUi()
-        self.labelid.setText('id товара')
-        self.labelid.move(self.width() // 2 - self.lineForDeleteProduct.width() // 2 - 80, self.height() // 2)
-        self.labelDel.move(self.width() // 2 - self.labelDel.width() // 2, 5)
-        self.lineForDeleteProduct.move(self.width() // 2 - self.lineForDeleteProduct.width() // 2, self.height() // 2)
-        self.buttonForDeleteProduct.move(self.width() // 2 - self.buttonForDeleteProduct.width() // 2, self.height() // 2 + 100)
-        # В основном методе изменемяем название окна, создаем надписи, меняем шрифт
 
-    def check(self):  # Функция проверки
-        result = db("select * from product where product_id = ?",
-                    (self.lineForDeleteProduct.text(),))
-        if len(result) > 0:
-            db('delete from product where product_id = ?', (self.lineForDeleteProduct.text(),))
-            self.close()
-            # Пропускаем
-        else:
-            self.labelWarAuth.setText('Такого товара не существует')
-            self.font.setPointSize(8)
-            self.labelWarAuth.setFont(self.font)
-            self.labelWarAuth.adjustSize()
-            self.labelWarAuth.setStyleSheet('color: red')
-            self.labelWarAuth.move(self.width() // 2 - self.labelWarAuth.width() // 2, 190)
-            self.labelWarAuth.show()
-            # Выводим ошибку
+    def delProduct(self):
+        print('s')
 
     def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
@@ -70,8 +45,7 @@ class DelWindow(QDialog):  # Окно авторизации
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QCoreApplication.translate
-        self.setWindowTitle(_translate("", "Удаление товара"))
-        self.labelDel.setText(_translate("", "Удаление"))
-        self.buttonForDeleteProduct.setText(_translate("", "Удалить"))
-        self.labelDel.adjustSize()
+        self.label.setText(_translate("Form", "Вы точно хотите удалить товар?"))
+        self.ok.setText('Да')
+        self.cancel.setText('Нет')
     #  Изменяем текст в объетках по смыслу
