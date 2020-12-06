@@ -9,8 +9,8 @@ class DB:
 
     def addProduct(self, name, brand, model, price, count):  # Функция для работы с базой данных.
         self.cur.execute('INSERT INTO product (product_photo, product_brand, product_name, product_price,'
-                         ' product_count) VALUES (?, ?, ?, ?, ?)',
-                         (name, brand, model, price, count,))
+                         ' product_count, product_required) VALUES (?, ?, ?, ?, ?, ?)',
+                         (name, brand, model, price, count, 0, ))
         self.commitConnection()
         # Проводим запрос
 
