@@ -43,15 +43,15 @@ class shopWindow(QtWidgets.QWidget):
     def setupUi(self):  # Основной метод
         #  Все кнопки создаются по мере работы, а не в инициализации т.к. после инициализации кнопки не хотят работать
         self.setObjectName("Form")
-        self.buttonForLK.setGeometry(QtCore.QRect(730, 30, 120, 28))  # Изменяем геометрию кнопки для ЛК
+        self.buttonForLK.resize(120, 28)  # Изменяем геометрию кнопки для ЛК
         self.buttonForLK.setObjectName("pushButton")
         # self.buttonForLK.clicked.connect()  # Коннект функции к кнопке
-        self.buttonForAddProduct.setGeometry(QtCore.QRect(20, 30, 131, 28))
+        self.buttonForAddProduct.resize(131, 28)
         # Изменяем геометрию кнопки для создания продукта
         self.buttonForAddProduct.setObjectName("pushButton_2")
         self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
         # Изменяем геометрию кнопки для удаления продукта
-        self.buttonForCreateCheck.setGeometry(QtCore.QRect(510, 30, 110, 28))
+        self.buttonForCreateCheck.resize( 130, 28)
         # Изменяем геометрию кнопки для создания чека
         self.buttonForCreateCheck.setObjectName("pushButton_6")
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
@@ -72,6 +72,8 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
         self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
         self.tableWidget.setColumnWidth(1, 200)
+        self.buttonForAddProduct.move(self.tableWidget.x(), 30)
+        self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
         self.tableWidget.cellPressed[int, int].connect(self.clickedRow)
 
         self.warning.setText('Предупреждение')
@@ -85,7 +87,6 @@ class shopWindow(QtWidgets.QWidget):
         self.label.setObjectName("label")
 
         self.retranslateUi()  # Специальная функция от qt для переименовывания названий объектов
-        self.buttonForCreateCheck.adjustSize()
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
@@ -162,3 +163,6 @@ class shopWindow(QtWidgets.QWidget):
         self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140, self.lineEditForSearch.height())
         self.lineEditForSearch.move(self.width() // 2 - self.lineEditForSearch.width() // 2 + 70, self.lineEditForSearch.y())
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
+        self.buttonForAddProduct.move(self.tableWidget.x(), 30)
+        self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
+        self.buttonForCreateCheck.move(self.width() // 2 - self.buttonForCreateCheck.width() // 2, 30)
