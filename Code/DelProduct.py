@@ -9,6 +9,7 @@ class DelWindow(QDialog):  # Окно авторизации
     def __init__(self, root):  # Инициализация
         self.root = root
         self.root.setEnabled(False)
+        self.db = DB()
         super(DelWindow, self).__init__()
         self.layout = QVBoxLayout()
         self.layout.addWidget(MyBar(self))
@@ -37,7 +38,7 @@ class DelWindow(QDialog):  # Окно авторизации
         self.retranslateUi()
 
     def delProduct(self):
-        print(self.root.column)
+        self.db.delProduct(self.root.tableWidget.item(self.root.row, 0).text())
         self.close()
 
     def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна

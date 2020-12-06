@@ -72,7 +72,7 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
         self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
         self.tableWidget.setColumnWidth(1, 200)
-        self.tableWidget.cellPressed[int, int].connect(self.clickedRowColumn)
+        self.tableWidget.cellPressed[int, int].connect(self.clickedRow)
 
         self.warning.setText('Предупреждение')
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
@@ -133,10 +133,8 @@ class shopWindow(QtWidgets.QWidget):
         self.delWind = DelWindow(self)  # создаем объект для работы с окном из другого файла и инициализируем его
         self.delWind.show()
 
-    def clickedRowColumn(self, r, c):
+    def clickedRow(self, r, c):
         self.row = r
-        self.column = c
-        print("{}: row={}, column={}".format(self.tableWidget.mouse_press, r, c))
 
     def updateTable(self):
         self.tableWidget.setRowCount(0)

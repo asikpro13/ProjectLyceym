@@ -14,8 +14,9 @@ class DB:
         self.commitConnection()
         # Проводим запрос
 
-    def delProduct(self, id):
-        pass
+    def delProduct(self, product_id):
+        self.cur.execute('delete from product where product_id = ?', (product_id, ))
+        self.commitConnection()
 
     def auth(self, login, password):
         result = self.cur.execute("select * from Auth where login = ? and password = ?",
