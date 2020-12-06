@@ -67,7 +67,7 @@ class AuthWindow(QDialog):  # Окно авторизации
         result = self.db.auth(self.lineEditForLogin.text(), self.lineEditForPassword.text())
         if len(result) > 0:
             self.root.close()
-            self.id.setText(str(result[0][-1]))
+            self.id.setText(str(result[0][3]))
             self.shopWind()
             self.close()
             # Пропускаем

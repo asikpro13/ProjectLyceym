@@ -1,4 +1,5 @@
 import sqlite3
+import os
 #  Импорт всех нужных библиотек, стилей
 
 
@@ -15,6 +16,13 @@ class DB:
         # Проводим запрос
 
     def delProduct(self, product_id):
+        result = self.cur.execute('select product_photo from product where product_id = ?', (product_id,)).fetchone()
+        result = self.cur.execute('select product_photo from product where product_photo = ?', (result[0],)).fetchall()
+        try:
+            if len(result) == 1:
+                os.remove(result[0][0])
+        except FileNotFoundError:
+            pass
         self.cur.execute('delete from product where product_id = ?', (product_id, ))
         self.commitConnection()
 

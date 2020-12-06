@@ -4,6 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
 from Code.DelProduct import DelWindow
 from Code.AddProduct import addProductWindow
+from Code.LK import LK_window
 from DataBase.workFromDB import DB  # Импортируем работу с базой данных
 #  Импорт всех нужных библиотек, стилей
 
@@ -15,9 +16,10 @@ class TableWidget(QtWidgets.QTableWidget):
         self.mouse_press = None
 
     def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.RightButton:
-            shopWindow.openDelProductWindow(self.root)
-        super(TableWidget, self).mousePressEvent(event)
+            if event.button() == QtCore.Qt.RightButton:
+                if self.root.id == '1':
+                    shopWindow.openDelProductWindow(self.root)
+            super(TableWidget, self).mousePressEvent(event)
 
 
 class shopWindow(QtWidgets.QWidget):
@@ -31,6 +33,7 @@ class shopWindow(QtWidgets.QWidget):
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
         self.setMinimumHeight(self.height())  # Изменяем минимальную высоту окна
         self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
+        self.buttonForLK.clicked.connect(self.openLKWindow)
         self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
         if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
             self.buttonForAddProduct.hide()
@@ -142,6 +145,10 @@ class shopWindow(QtWidgets.QWidget):
             self.warning.show()
             self.tableWidget.blockSignals(False)
 
+    def openLKWindow(self):
+        self.LK = LK_window(self)
+        self.LK.show()
+
     def openAddProductWindow(self):
         self.addWind = addProductWindow(self)
         self.addWind.show()
@@ -170,8 +177,12 @@ class shopWindow(QtWidgets.QWidget):
                     self.tableWidget.setRowHeight(i, 200)
                     s.setText('')
                     s.setBackground(brush)
-                if str(j) in '012345':
-                    s.setFlags(QtCore.Qt.ItemIsEditable)
+                if self.id != '1':
+                    if str(j) in '012345':
+                        s.setFlags(QtCore.Qt.ItemIsEditable)
+                else:
+                    if str(j) in '0':
+                        s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidget.setItem(i, j, s)
         self.tableWidget.blockSignals(False)
 
