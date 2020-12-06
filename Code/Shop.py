@@ -25,6 +25,7 @@ class shopWindow(QtWidgets.QWidget):
         self.root = root  # Создаем экземпляр родительского окна
         self.id = root.id.text()  # Получаем параметр админ/не админ от родительского окна
         self.db = DB()
+        self.listWarning = []
         super(shopWindow, self).__init__()
         self.resize(869, 746)  # Изменяем размер окна
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
@@ -75,7 +76,7 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
         self.tableWidget.cellPressed[int, int].connect(self.clickedRow)
-
+        self.tableWidget.cellChanged.connect(self.updateProduct)
         self.warning.setText('Предупреждение')
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
         self.warning.hide()
@@ -89,42 +90,56 @@ class shopWindow(QtWidgets.QWidget):
         self.retranslateUi()  # Специальная функция от qt для переименовывания названий объектов
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
-        _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Form", "Касса"))
-        self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
-        self.buttonForAddProduct.setText(_translate("Form", "Добавить продукт"))
-        self.buttonForCreateCheck.setText(_translate("Form", "Совершить покупку"))
-        self.label.setText(_translate("Form", "Поиск продукта:"))
-    # Изменяем текст в объетках по смыслу
-
     def checkCount(self, row, column):
         if column >= 6:
             try:
                 if int(self.tableWidget.item(row, column - 1).text()) < int(self.tableWidget.item(row, column).text()) \
                         or int(self.tableWidget.item(row, column).text()) < 0:
                     raise TypeError
-                self.font.setBold(False)
-                self.tableWidget.item(row, column).setFont(self.font)
-                self.tableWidget.item(row, column).setForeground(QtGui.QColor(0, 0, 0))
-                self.warning.hide()
-                self.buttonForCreateCheck.setEnabled(True)
             except TypeError:
-                self.font.setBold(True)  # Изменяем ширину шрифта
-                self.warning.setText('Ошибка данных')
-                self.tableWidget.item(row, column).setFont(self.font)
-                self.tableWidget.item(row, column).setForeground(QtGui.QColor(255, 0, 0))
-                self.buttonForCreateCheck.setEnabled(False)
-                self.warning.show()
+                self.showError(row, column)
             except ValueError:
-                self.font.setBold(True)  # Изменяем ширину шрифта
-                self.warning.setText('Ошибка данных')
-                self.tableWidget.item(row, column).setFont(self.font)
-                self.tableWidget.item(row, column).setForeground(QtGui.QColor(255, 0, 0))
-                self.buttonForCreateCheck.setEnabled(False)
-                self.warning.show()
+                self.showError(row, column)
             except AttributeError:
                 pass
+
+    def showError(self, row, column):
+        try:
+            if column == 6:
+                count = 0
+                self.tableWidget.blockSignals(True)
+                if [row, column] not in self.listWarning:
+                    self.listWarning.append([row, column])
+                for i in range(len(self.listWarning)):
+                    if int(self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1] - 1).text()) < int(self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).text()) \
+                            or int(self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).text()) < 0:
+                        self.font.setBold(True)  # Изменяем ширину шрифта
+                        self.warning.setText('Ошибка данных')
+                        self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).setFont(self.font)
+                        self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).setForeground(QtGui.QColor(255, 0, 0))
+                        self.buttonForCreateCheck.setEnabled(False)
+                        self.warning.show()
+                    else:
+                        self.font.setBold(False)
+                        self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).setFont(self.font)
+                        self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).setForeground(QtGui.QColor(0, 0, 0))
+                        if i + 1 <= len(self.listWarning):
+                            self.listWarning.pop(i - count)
+                            count += 1
+                if len(self.listWarning) == 0:
+                    self.buttonForCreateCheck.setEnabled(True)
+                    self.warning.hide()
+                self.tableWidget.blockSignals(False)
+        except ValueError:
+            self.tableWidget.blockSignals(True)
+            self.font.setBold(True)  # Изменяем ширину шрифта
+            self.warning.setText('Ошибка данных')
+            self.tableWidget.item(row, column).setFont(self.font)
+            self.tableWidget.item(row, column).setForeground(
+                QtGui.QColor(255, 0, 0))
+            self.buttonForCreateCheck.setEnabled(False)
+            self.warning.show()
+            self.tableWidget.blockSignals(False)
 
     def openAddProductWindow(self):
         self.addWind = addProductWindow(self)
@@ -136,8 +151,11 @@ class shopWindow(QtWidgets.QWidget):
 
     def clickedRow(self, r, c):
         self.row = r
+        if c == 6:
+            self.checkCount(r, c)
 
     def updateTable(self):
+        self.tableWidget.blockSignals(True)
         self.tableWidget.setRowCount(0)
         request = self.lineEditForSearch.text()
         res = self.db.updateTableRequest(request)
@@ -156,6 +174,12 @@ class shopWindow(QtWidgets.QWidget):
                 self.tableWidget.setItem(i, j, s)
             s = QTableWidgetItem('0')
             self.tableWidget.setItem(i, j + 1, s)
+        self.tableWidget.blockSignals(False)
+
+    def updateProduct(self, row, column):
+        self.showError(row, column)
+
+
 
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5), self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
@@ -166,3 +190,13 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
         self.buttonForCreateCheck.move(self.width() // 2 - self.buttonForCreateCheck.width() // 2, 30)
+
+
+    def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
+        _translate = QtCore.QCoreApplication.translate
+        self.setWindowTitle(_translate("Form", "Касса"))
+        self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
+        self.buttonForAddProduct.setText(_translate("Form", "Добавить продукт"))
+        self.buttonForCreateCheck.setText(_translate("Form", "Совершить покупку"))
+        self.label.setText(_translate("Form", "Поиск продукта:"))
+    # Изменяем текст в объетках по смыслу
