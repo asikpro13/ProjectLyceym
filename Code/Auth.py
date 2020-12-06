@@ -36,7 +36,7 @@ class AuthWindow(QDialog):  # Окно авторизации
     def Auth(self):  # Основной метод
         self.setWindowTitle('Авторизация')
         self.setObjectName("")
-        self.labelAuth.setGeometry(QRect(self.width() // 2 - self.labelAuth.width(), 10, 231, 151))  # -.
+        self.labelAuth.setGeometry(QRect(self.width() // 2 - self.labelAuth.width(), 10, 231, 151))
         # Изменяем размер надписи
         self.font = QFont()
         self.font.setFamily("Roboto Light")

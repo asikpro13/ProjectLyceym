@@ -84,6 +84,7 @@ class shopWindow(QtWidgets.QWidget):
         self.font = QtGui.QFont()  # Создаем объект шрифта
         self.font.setFamily("Roboto Light")  # Изменяем семейство шрифта
         self.updateTable()  # Запускаем функцию обновления таблицы
+        self.checkError()
         self.label.setGeometry(QtCore.QRect(30, 80, 120, 20))  # Изменяем геометрию надписи
         self.label.setObjectName("label")
 
@@ -169,12 +170,17 @@ class shopWindow(QtWidgets.QWidget):
                     self.tableWidget.setRowHeight(i, 200)
                     s.setText('')
                     s.setBackground(brush)
-                if j == 0:
+                if str(j) in '012345':  # if j  == 0 or j == 1 or j == 2 or j == 3 or j == 4 or j == 5:
                     s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidget.setItem(i, j, s)
-            s = QTableWidgetItem('0')
-            self.tableWidget.setItem(i, j + 1, s)
         self.tableWidget.blockSignals(False)
+
+    def checkError(self):
+        for i in range(self.tableWidget.rowCount()):
+            if self.tableWidget.item(i, 5).text() < self.tableWidget.item(i, 6).text():
+                self.listWarning.append([i, 6])
+        if len(self.listWarning) != 0:
+            self.showError(self.listWarning[0][0], self.listWarning[0][1])
 
     def updateProduct(self, row, column):
         self.showError(row, column)
@@ -186,8 +192,6 @@ class shopWindow(QtWidgets.QWidget):
         required = self.tableWidget.item(row, 6).text()
         self.db.updateProduct(id, brand, name, price, count, required)
 
-
-
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5), self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
         self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2, self.tableWidget.y())
@@ -197,7 +201,6 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
         self.buttonForCreateCheck.move(self.width() // 2 - self.buttonForCreateCheck.width() // 2, 30)
-
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QtCore.QCoreApplication.translate

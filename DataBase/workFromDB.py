@@ -46,5 +46,3 @@ class DB:
 
     def closeConnection(self):  # Закрываем соединение
         self.connect.close()
-
-#  Сделать класс для работы с бд
