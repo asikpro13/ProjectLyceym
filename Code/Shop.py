@@ -178,6 +178,13 @@ class shopWindow(QtWidgets.QWidget):
 
     def updateProduct(self, row, column):
         self.showError(row, column)
+        id = self.tableWidget.item(row, 0).text()
+        brand = self.tableWidget.item(row, 2).text()
+        name = self.tableWidget.item(row, 3).text()
+        price = self.tableWidget.item(row, 4).text()
+        count = self.tableWidget.item(row, 5).text()
+        required = self.tableWidget.item(row, 6).text()
+        self.db.updateProduct(id, brand, name, price, count, required)
 
 
 

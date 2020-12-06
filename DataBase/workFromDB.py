@@ -28,6 +28,11 @@ class DB:
                                   ('%' + str(text) + '%', '%' + str(text) + '%',)).fetchall()
         return result
 
+    def updateProduct(self, id, brand, name, price, count, required):
+        self.cur.execute('update product set product_brand = ?, product_name = ?, product_price = ?, product_count = ?,'
+                         ' product_required = ? where product_id = ?', (brand, name, price, count, required, id))
+        self.commitConnection()
+
     def checkUser(self, login, password):
         result = self.cur.execute("select * from Auth where login = ? and password = ?",
                                   (login, password,)).fetchall()
