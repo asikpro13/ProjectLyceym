@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5 import QtCore, QtGui, QtWidgets, Qt
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
 from Code.DelProduct import DelWindow
 from Code.AddProduct import addProductWindow
-from DataBase.workFromDB import db  # Импортируем работу с базой данных
+from DataBase.workFromDB import DB  # Импортируем работу с базой данных
 #  Импорт всех нужных библиотек, стилей
 
 
@@ -24,6 +24,7 @@ class shopWindow(QtWidgets.QWidget):
     def __init__(self, root):
         self.root = root  # Создаем экземпляр родительского окна
         self.id = root.id.text()  # Получаем параметр админ/не админ от родительского окна
+        self.db = DB()
         super(shopWindow, self).__init__()
         self.resize(869, 746)  # Изменяем размер окна
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
@@ -140,16 +141,14 @@ class shopWindow(QtWidgets.QWidget):
     def updateTable(self):
         self.tableWidget.setRowCount(0)
         request = self.lineEditForSearch.text()
-        res = db('select * from product where product_brand like ? or product_name like ?',
-                 ('%' + str(request) + '%', '%' + str(request) + '%',))
-        res = db('select * from product')
+        res = self.db.updateTableRequest(request)
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
             for j, elem in enumerate(row):
                 s = QTableWidgetItem(str(elem))
                 if j == 1:
-                    brush = QtGui.QBrush(QtGui.QPixmap('../Image/DBImage/1200px-Triangle-blue.svg.png').scaled(200, 200))
+                    brush = QtGui.QBrush(QtGui.QPixmap(res[i][1]).scaled(200, 200))
                     self.tableWidget.setRowHeight(i, 200)
                     s.setText('')
                     s.setBackground(brush)

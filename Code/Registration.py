@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QRect, QMetaObject, QCoreApplication
 from PyQt5.QtGui import QFont
 # Импортируем специальные библиотеки
 from Code.ButtonsForWindow import MyBar
-from DataBase.workFromDB import db
+from DataBase.workFromDB import DB
 # Импортируем настройки стилей
 
 
@@ -12,6 +12,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
     def __init__(self, root):  # Инициализация
         self.root = root  # Создаем экземпляр родительского окна
         self.root.setEnabled(False)  # Делаем окно не активным
+        self.db = DB()
         super(RegistrationWindow, self).__init__()  # Инициализация
         self.layout = QVBoxLayout()  # Создание лэйаута
         self.layout.addWidget(MyBar(self))  # Добавление специального класса в лэйаут
@@ -62,7 +63,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
         QMetaObject.connectSlotsByName(self)  # Коннект сигналов к слотам по названиям ???WTF ----------------
 
     def reg(self):  # функция регистрации(работа с бд)
-        result = db("select * from Auth where login = ? and password = ?", (self.lineEditForLogin.text(), self.lineEditForPassword.text(),))
+        result = self.db.checkUser(self.lineEditForLogin.text(), self.lineEditForPassword.text())
         if len(result) == 1:
             self.labelWarRegistr.setText('Такой пользователь уже существует')
         elif len(self.lineEditForPassword.text()) <= 6:
@@ -70,7 +71,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
         elif len(self.lineEditForLogin.text()) < 3:
             self.labelWarRegistr.setText('Логин не доступен')
         else:
-            db('INSERT INTO Auth (login, password) VALUES (?, ?)', (self.lineEditForLogin.text(), self.lineEditForPassword.text(),))
+            self.db.registrationUser(self.lineEditForLogin.text(), self.lineEditForPassword.text())
             self.close()  # закрываем окно
         #  Проводим запрос на добавление юзера в бд только если проходят условия
         self.labelWarRegistr.adjustSize()  # ->

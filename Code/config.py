@@ -1,4 +1,3 @@
-open('../Image/backgroundSide.jpg')
 backgroundMain = "../Image/backgroundMain.png"
 backgroundSide = "../Image/backgroundSide.jpg"
 

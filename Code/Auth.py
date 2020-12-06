@@ -2,13 +2,14 @@ from PyQt5.QtWidgets import QDialog, QLabel, QFrame, QLineEdit, QPushButton, QVB
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
 from Code.Shop import shopWindow
 from Code.ButtonsForWindow import MyBar
-from DataBase.workFromDB import db
+from DataBase.workFromDB import DB
 from PyQt5.QtGui import QFont
 
 
 class AuthWindow(QDialog):  # Окно авторизации
     def __init__(self, root):  # Инициализация
         self.root = root
+        self.db = DB()
         self.root.setEnabled(False)
         super(AuthWindow, self).__init__()
         self.layout = QVBoxLayout()
@@ -64,7 +65,6 @@ class AuthWindow(QDialog):  # Окно авторизации
         # В основном методе изменемяем название окна, создаем надписи, меняем шрифт
 
     def check(self):  # Функция проверки
-        self.db = db()
         result = self.db.auth(self.lineEditForLogin.text(), self.lineEditForPassword.text())
         if len(result) > 0:
             self.root.close()

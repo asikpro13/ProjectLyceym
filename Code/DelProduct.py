@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QLabel, QFrame, QLineEdit, QPushButton, QVBoxLayout
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
 from Code.ButtonsForWindow import MyBar
-from DataBase.workFromDB import db
+from DataBase.workFromDB import DB
 from PyQt5.QtGui import QFont
 
 
