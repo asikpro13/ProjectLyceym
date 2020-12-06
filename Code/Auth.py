@@ -61,7 +61,6 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.buttonForAuth.resize(130, 30)
         self.buttonForAuth.move(self.width() // 2 - self.buttonForAuth.width() // 2, 370)
         self.retranslateUi()
-
         # В основном методе изменемяем название окна, создаем надписи, меняем шрифт
 
     def check(self):  # Функция проверки

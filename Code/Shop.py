@@ -170,7 +170,7 @@ class shopWindow(QtWidgets.QWidget):
                     self.tableWidget.setRowHeight(i, 200)
                     s.setText('')
                     s.setBackground(brush)
-                if str(j) in '012345':  # if j  == 0 or j == 1 or j == 2 or j == 3 or j == 4 or j == 5:
+                if str(j) in '012345':
                     s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidget.setItem(i, j, s)
         self.tableWidget.blockSignals(False)
