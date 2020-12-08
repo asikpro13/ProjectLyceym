@@ -2,6 +2,7 @@
 from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QFrame, QDialog, QVBoxLayout
 from PyQt5.QtCore import Qt, QRect, QMetaObject, QCoreApplication
 from PyQt5.QtGui import QFont
+from Code.Shop import shopWindow
 # Импортируем специальные библиотеки
 from Code.ButtonsForWindow import MyBar
 from DataBase.workFromDB import DB
@@ -28,6 +29,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
         self.lineEditForLogin = QLineEdit(self)  # Создаем поле ввода для логина
         self.lineEditForPassword = QLineEdit(self)  # Создаем поле ввода для пароля
         self.buttonForRegistr = QPushButton(self)  # Создаем кнопку для регистрации
+        self.id = QLabel(self)
         self.setupUi()  # Вызываем метод с основной работой
         # В данном случае проблем с созданием кнопок до работы с основной функцией не наблюдается
 
@@ -35,6 +37,8 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
         self.setFixedSize(400, 439)  # Изменяем размер окна при появлении
         self.labelRegistr.setGeometry(QRect(self.width() // 2 - self.labelRegistr.width(), 10, 231, 151))  # ->
         # Изменяем геометрию(отступ по x, отступ по y, размер по x, размер по y) надписи регистрации
+        self.id.setText('0')
+        self.id.hide()
         self.font = QFont()  # Создаем объект шрифта
         self.font.setFamily("Roboto Light")  # Изменяем семейство шрифта
         self.font.setPointSize(22)  # Изменяем размер шрифта
@@ -60,7 +64,6 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
         self.buttonForRegistr.move(self.width() // 2 - self.buttonForRegistr.width() // 2, 370)  # Двигаем кнопку
         self.buttonForRegistr.clicked.connect(self.reg)  # Коннектим функцию с нажатием кнопки
         self.retranslateUi()  # Вызов специальной функции от qt  для переменовывания названий объектов
-        QMetaObject.connectSlotsByName(self)  # Коннект сигналов к слотам по названиям ???WTF ----------------
 
     def reg(self):  # функция регистрации(работа с бд)
         result = self.db.checkUser(self.lineEditForLogin.text(), self.lineEditForPassword.text())
@@ -73,6 +76,8 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
         else:
             self.db.registrationUser(self.lineEditForLogin.text(), self.lineEditForPassword.text())
             self.close()  # закрываем окно
+            self.root.close()
+            self.shopWind()
         #  Проводим запрос на добавление юзера в бд только если проходят условия
         self.labelWarRegistr.adjustSize()  # ->
         # Позволяем кнопке подстроить свой размер по размеру объекта в нем(текст, фото)
@@ -81,6 +86,10 @@ class RegistrationWindow(QDialog):  # Окно для регистрации(м�
 
     def closeEvent(self, Event):  # Внутренний макрос pyqt на закрытие окна
         self.root.setEnabled(True)  # Заставляем окно продолжить работу
+
+    def shopWind(self):  # Функция дла показа окна с магазином
+        self.Wind = shopWindow(self)
+        self.Wind.show()
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QCoreApplication.translate  # Экземпляр для работы с переименовыванием объектов

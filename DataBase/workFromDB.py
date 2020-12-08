@@ -47,7 +47,8 @@ class DB:
         return result
 
     def registrationUser(self, login, password):
-        self.cur.execute('INSERT INTO Auth (login, password) VALUES (?, ?)', (login, password,))
+        self.cur.execute('INSERT INTO Auth (login, password, admin) VALUES (?, ?, ?)', (login, password, 0))
+        self.commitConnection()
 
     def commitConnection(self):  # коммит
         self.connect.commit()
