@@ -90,9 +90,9 @@ class addProductWindow(QtWidgets.QDialog):
     def createProduct(self):
         try:
             shutil.copy(self.fname, '../Image/DBImage')
-            name = self.fname[self.fname.rfind('/') + 1:]
+            name = '../Image/DBImage/' + self.fname[self.fname.rfind('/') + 1:]
             # open('../Image/DBImage' + name) # Путь
-            self.db.addProduct('../Image/DBImage/' + name, self.lineEdit.text(), self.lineEdit_2.text(), self.spinBox.text(), self.spinBox_2.text())
+            self.db.addProduct(name, self.lineEdit.text(), self.lineEdit_2.text(), self.spinBox.text(), self.spinBox_2.text())
             self.close()
         except FileNotFoundError:
             self.warning.show()
