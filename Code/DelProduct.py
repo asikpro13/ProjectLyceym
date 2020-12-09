@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QDialog, QLabel, QFrame, QLineEdit, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
 from Code.ButtonsForWindow import MyBar
 from DataBase.workFromDB import DB
-from PyQt5.QtGui import QFont
 
 
 class DelWindow(QDialog):  # Окно авторизации
@@ -38,7 +37,7 @@ class DelWindow(QDialog):  # Окно авторизации
         self.retranslateUi()
 
     def delProduct(self):
-        self.db.delProduct(self.root.tableWidget.item(self.root.row, 0).text())
+        self.db.delProduct(self.root.tableWidget.item(self.root.r, 0).text())
         self.close()
 
     def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна

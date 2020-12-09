@@ -14,9 +14,8 @@ class TableWidget(QtWidgets.QTableWidget):
     def __init__(self, root):
         self.root = root  # Создаем экземпляр родительского окна
         super(TableWidget, self).__init__(root)
-        self.mouse_press = None
+        # self.cellPressed[int, int].connect(self.columnRow)
         self.cellPressed[int, int].connect(self.root.clickedRow)
-        self.cellPressed[int, int].connect(self.columnRow)
 
     def columnRow(self, r, c):
         self.r = r
@@ -28,14 +27,13 @@ class TableWidget(QtWidgets.QTableWidget):
             if event.button() == QtCore.Qt.RightButton:
                 shopWindow.openDelProductWindow(self.root)
             elif event.button() == QtCore.Qt.LeftButton:
-                if self.c == 1:
+                if self.root.c == 1:
                     self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара',
                                                                           filter='Файлы изображений (*.png *.jpg *.bmp)')
-                    name = '../Image/DBImage/' + self.fname[self.fname.rfind('/') + 1:]
-                    if name != '../Image/DBImage/':
-                        product_id = self.root.tableWidget.item(self.r, 0).text()
-                        self.root.db.updateProductPhoto(product_id, name)
-                    self.root.updateTable()
+                    if self.fname != '':
+                        product_id = self.root.tableWidget.item(self.root.r, 0).text()
+                        self.root.db.updateProductPhoto(product_id, self.fname)
+                self.root.updateTable()
 
 
 class shopWindow(QtWidgets.QWidget):
@@ -43,6 +41,7 @@ class shopWindow(QtWidgets.QWidget):
         self.root = root  # Создаем экземпляр родительского окна
         self.id = root.id.text()  # Получаем параметр админ/не админ от родительского окна
         self.column = 0
+        self.r = 0
         self.db = DB()
         self.listWarning = []
         super(shopWindow, self).__init__()
@@ -182,6 +181,8 @@ class shopWindow(QtWidgets.QWidget):
         self.delWind.show()
 
     def clickedRow(self, r, c):
+        self.r = r
+        self.c = c
         if c == 6:
             self.checkCount(r, c)
 
