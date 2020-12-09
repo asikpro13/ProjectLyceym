@@ -80,7 +80,8 @@ class DB:
             pass
 
     def getStats(self, user_login):
-        result = self.cur.execute('select purchases, Money, counterProducts from Auth where login = ?', ())
+        result = self.cur.execute('select purchases, Money, counterProducts from Auth where login = ?', (user_login,)).fetchall()
+        return result[0]
 
     def commitConnection(self):  # коммит
         self.connect.commit()

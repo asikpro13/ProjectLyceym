@@ -43,6 +43,7 @@ class shopWindow(QtWidgets.QWidget):
     def __init__(self, root):
         self.root = root  # Создаем экземпляр родительского окна
         self.id = root.id.text()  # Получаем параметр админ/не админ от родительского окна
+        self.login = root.login.text()
         self.column = 0
         self.r = 0
         self.db = DB()
