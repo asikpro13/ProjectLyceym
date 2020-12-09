@@ -83,6 +83,14 @@ class DB:
         result = self.cur.execute('select purchases, Money, counterProducts from Auth where login = ?', (user_login,)).fetchall()
         return result[0]
 
+    def getUsers(self):
+        result = self.cur.execute('select login from Auth').fetchall()
+        return result
+
+    def setAdmin(self, login):
+        self.cur.execute('update Auth set admin = 1 where login = ?', (login,))
+        self.commitConnection()
+
     def commitConnection(self):  # коммит
         self.connect.commit()
 
