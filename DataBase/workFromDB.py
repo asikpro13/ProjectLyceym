@@ -68,6 +68,8 @@ class DB:
                 os.remove(result[0][0])
         except FileNotFoundError:
             pass
+        except PermissionError:
+            pass
 
     def savePhoto(self, path):
         try:
@@ -76,6 +78,9 @@ class DB:
             pass
         except shutil.SameFileError:
             pass
+
+    def getStats(self, user_login):
+        result = self.cur.execute('select purchases, Money, counterProducts from Auth where login = ?', ())
 
     def commitConnection(self):  # коммит
         self.connect.commit()

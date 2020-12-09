@@ -28,6 +28,7 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.lineEditForPassword = QLineEdit(self)
         self.buttonForAuth = QPushButton(self)
         self.id = QLabel(self)
+        self.login = QLabel(self)
         self.setFixedSize(400, 439)
         self.Auth()
         #  Создаем объект дочернего окна, создаем кастомные титульные кнопки, создаем надписи, поля для ввода
@@ -68,6 +69,7 @@ class AuthWindow(QDialog):  # Окно авторизации
         if len(result) > 0:
             self.root.close()
             self.id.setText(str(result[0][3]))
+            self.login.setText(str(self.lineEditForPassword.text()))
             self.shopWind()
             self.close()
             # Пропускаем

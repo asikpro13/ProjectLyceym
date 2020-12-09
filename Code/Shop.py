@@ -27,12 +27,15 @@ class TableWidget(QtWidgets.QTableWidget):
             if event.button() == QtCore.Qt.RightButton:
                 shopWindow.openDelProductWindow(self.root)
             elif event.button() == QtCore.Qt.LeftButton:
-                if self.root.c == 1:
-                    self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара',
-                                                                          filter='Файлы изображений (*.png *.jpg *.bmp)')
-                    if self.fname != '':
-                        product_id = self.root.tableWidget.item(self.root.r, 0).text()
-                        self.root.db.updateProductPhoto(product_id, self.fname)
+                try:
+                    if self.root.c == 1:
+                        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара',
+                                                                              filter='Файлы изображений (*.png *.jpg *.bmp)')
+                        if self.fname != '':
+                            product_id = self.root.tableWidget.item(self.root.r, 0).text()
+                            self.root.db.updateProductPhoto(product_id, self.fname)
+                except AttributeError:
+                    pass
                 self.root.updateTable()
 
 

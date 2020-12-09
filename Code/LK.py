@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from Code.ButtonsForWindow import MyBar
 
 
 class LK_window(QtWidgets.QDialog):
@@ -6,26 +7,34 @@ class LK_window(QtWidgets.QDialog):
         self.root = root
         super(LK_window, self).__init__()
         self.setupUi()
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.addWidget(MyBar(self))
+        self.setLayout(self.layout)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.addStretch(-1)
+        self.setMinimumSize(456, 456)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.pressing = False
 
     def setupUi(self):
         self.setObjectName("Form")
         self.setEnabled(True)
-        self.resize(456, 456)
-        self.label = QtWidgets.QLabel(self)
-        self.label.setGeometry(QtCore.QRect(40, 30, 131, 171))
-        self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(self)
-        self.label_2.setGeometry(QtCore.QRect(280, 50, 61, 21))
-        self.label_2.setObjectName("label_2")
-        self.label_3 = QtWidgets.QLabel(self)
-        self.label_3.setGeometry(QtCore.QRect(250, 100, 120, 16))
-        self.label_3.setObjectName("label_3")
-        self.label_4 = QtWidgets.QLabel(self)
-        self.label_4.setGeometry(QtCore.QRect(200, 155, 230, 13))
-        self.label_4.setObjectName("label_4")
-        self.label_5 = QtWidgets.QLabel(self)
-        self.label_5.setGeometry(QtCore.QRect(230, 200, 171, 16))
-        self.label_5.setObjectName("label_5")
+        if self.root.id == "0":
+            self.pix = QtGui.QPixmap('../Image/account_group_team_user_icon_127141 (1).png').scaled(150, 150)
+        else:
+            self.pix = QtGui.QPixmap('../Image/date.png').scaled(150, 150)
+        self.userPhoto = QtWidgets.QLabel(self)
+        self.userPhoto.move(int(self.width() * 0.05), 111 + 40)
+        self.userPhoto.setPixmap(self.pix)
+        self.userPhoto.resize(150, 150)
+        self.userLogin = QtWidgets.QLabel(self)
+        self.userLogin.setGeometry(QtCore.QRect(280, 50, 61, 21))
+        self.purchases = QtWidgets.QLabel(self)
+        self.purchases.setGeometry(QtCore.QRect(250, 100, 120, 16))
+        self.money = QtWidgets.QLabel(self)
+        self.money.setGeometry(QtCore.QRect(200, 155, 230, 13))
+        self.counterProducts = QtWidgets.QLabel(self)
+        self.counterProducts.setGeometry(QtCore.QRect(230, 200, 171, 16))
         self.label_6 = QtWidgets.QLabel(self)
         self.label_6.setGeometry(QtCore.QRect(280, 170, 51, 30))
         font = QtGui.QFont()
@@ -64,13 +73,9 @@ class LK_window(QtWidgets.QDialog):
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("Form", "Form"))
-        self.label.setText(_translate("Form", "фото юзера"))
-        self.label_2.setText(_translate("Form", "Ваш логин:"))
-        self.label_3.setText(_translate("Form", "Совершено покупок:"))
-        self.label_4.setText(_translate("Form", "Сумма которая была потрачена на покупки:"))
-        self.label_5.setText(_translate("Form", "Количество купленного товара:"))
-        self.label_6.setText(_translate("Form", "10000"))
-        self.label_7.setText(_translate("Form", "10000"))
+        self.userLogin.setText(_translate("Form", "Ваш логин:"))
+        self.purchases.setText(_translate("Form", "Совершено покупок:"))
+        self.money.setText(_translate("Form", "Сумма которая была потрачена на покупки:"))
+        self.counterProducts.setText(_translate("Form", "Количество купленного товара:"))
         self.label_8.setText(_translate("Form", "asikpro13"))
-        self.label_9.setText(_translate("Form", "10000"))
         self.pushButton.setText(_translate("Form", "Назначить администратора"))
