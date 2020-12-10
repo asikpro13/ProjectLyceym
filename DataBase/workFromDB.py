@@ -41,7 +41,7 @@ class DB:
 
     def updateProduct(self, product_id, brand, name, price, count, required):
         self.cur.execute('update product set product_brand = ?, product_name = ?, product_price = ?, product_count = ?,'
-                         ' product_required = ? where product_id = ?', (brand, name, price, count, required, product_id))
+                         'product_required = ? where product_id = ?', (brand, name, price, count, required, product_id))
         self.commitConnection()
 
     def updateProductPhoto(self, product_id, path):
@@ -80,7 +80,8 @@ class DB:
             pass
 
     def getStats(self, user_login):
-        result = self.cur.execute('select purchases, Money, counterProducts from Auth where login = ?', (user_login,)).fetchall()
+        result = self.cur.execute('select purchases, Money, counterProducts from Auth where login = ?',
+                                  (user_login,)).fetchall()
         return result[0]
 
     def getUsers(self):
