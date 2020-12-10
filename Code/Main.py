@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from PyQt5.QtCore import QRect, Qt, QCoreApplication, QMetaObject
 from PyQt5.QtGui import QFont, QPixmap  # Импортируем специальные библиотеки
 from PyQt5.QtWidgets import QPushButton, QWidget, QVBoxLayout, QLabel, QApplication  # ->
