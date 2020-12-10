@@ -11,12 +11,14 @@ from Code.config import buttonAuth as bA
 from Code.config import buttonRegistration as bR
 # Импортируем настройки стилей
 import sys
+from DataBase.workFromDB import DB
 #  Импорт всех нужных библиотек, стилей
 
 
 class Main_Auth(QWidget):  # Главное окно с которого начинается работа приложения,
     def __init__(self):  # Инициализация
         super(Main_Auth, self).__init__()  # Наследование от окна и его инициализация
+
         self.layout = QVBoxLayout()  # Создание лэйаута
         self.layout.addWidget(MyBar(self))  # Добавление специального класса в лэйаут
         self.setLayout(self.layout)  # Изменение лэйаута в основном окне
@@ -26,13 +28,16 @@ class Main_Auth(QWidget):  # Главное окно с которого нач�
         self.resize(1080, 720)  # Изменение размера окна
         self.setWindowFlags(Qt.FramelessWindowHint)  # изменение конфига титульных кнопок
         self.pressing = False
+
         self.label = QLabel(self)  # Создаем лейбл(для фона)
-        self.Auth = QPushButton(self)  # Создаем кнопку
-        self.Registration = QPushButton(self)  # Создаем кнопку
+        self.Auth = QPushButton(self)  # Создаем кнопку для авторизации
+        self.Registration = QPushButton(self)  # Создаем кнопку для регистрации
 
         self.font = QFont()  # Создаем объект шрифта
         self.font.setFamily("Roboto Light")  # Изменяем семейство шрифта
         self.font.setPointSize(22)  # Изменяем размер шрифта
+
+        self.db = DB()
 
         self.setupUi()  # вызов метода с основной работой
 

@@ -10,9 +10,13 @@ from PyQt5.QtGui import QFont
 class AuthWindow(QDialog):  # Окно авторизации
     def __init__(self, root):  # Инициализация
         self.root = root
-        self.db = DB()
         self.root.setEnabled(False)
+        self.db = self.root.db
+        self.font = self.root.font
+        #  Наследуем все необходимые объекты
         super(AuthWindow, self).__init__()
+
+        self.setFixedSize(400, 439)
         self.layout = QVBoxLayout()
         self.layout.addWidget(MyBar(self))
         self.setLayout(self.layout)
@@ -21,37 +25,30 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.setMinimumSize(800, 400)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
-        self.labelAuth = QLabel(self)
-        self.labelWarAuth = QLabel(self)
-        self.labelLogin = QLabel(self)
-        self.labelPassword = QLabel(self)
-        self.lineEditForLogin = QLineEdit(self)
-        self.lineEditForPassword = QLineEdit(self)
-        self.buttonForAuth = QPushButton(self)
+        # Создание стиля титульных кнопок
+        self.labelLogin = QLabel(self)  # Создаем надпись логина
+        self.labelAuth = QLabel(self)  # Создаем надпись авторизации
+        self.labelWarAuth = QLabel(self)  # Создаем надпись с предупреждением
+        self.labelPassword = QLabel(self)  # Создаем надпись пароля
+        self.lineEditForLogin = QLineEdit(self)  # Создаем поле ввода для логина
+        self.lineEditForPassword = QLineEdit(self)  # Создаем поле ввода для пароля
+        self.buttonForAuth = QPushButton(self)  # Создаем кнопку для авторизации
+
         self.id = QLabel(self)
         self.login = QLabel(self)
-        self.setFixedSize(400, 439)
         self.Auth()
-        #  Создаем объект дочернего окна, создаем кастомные титульные кнопки, создаем надписи, поля для ввода
-        #  Изменяем размер окна и вызываем основной метод
 
     def Auth(self):  # Основной метод
         self.setWindowTitle('Авторизация')
-        self.setObjectName("")
         self.labelAuth.setGeometry(QRect(self.width() // 2 - self.labelAuth.width(), 10, 231, 151))
         # Изменяем размер надписи
-        self.font = QFont()
-        self.font.setFamily("Roboto Light")
-        self.font.setPointSize(22)
+
         self.labelAuth.setFont(self.font)
         self.labelAuth.setFrameShadow(QFrame.Plain)
-        self.labelAuth.setObjectName("label")
         self.labelLogin.setGeometry(QRect(self.width() // 2 - self.labelLogin.width() // 2, 130, 151, 61))
         self.labelPassword.setFont(self.font)
-        self.labelPassword.setObjectName("label_2")
         self.labelPassword.setGeometry(QRect(self.width() // 2 - self.labelPassword.width() // 2 - 5, 250, 151, 61))
         self.labelLogin.setFont(self.font)
-        self.labelLogin.setObjectName("label_3")
         self.lineEditForLogin.setGeometry(QRect(60, 210, 270, 30))
         self.lineEditForLogin.setObjectName("lineEdit")
         self.lineEditForPassword.setGeometry(QRect(60, 320, 271, 30))

@@ -37,6 +37,8 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
         self.buttonForRegistr = QPushButton(self)  # Создаем кнопку для регистрации
         self.setupUi()  # Вызываем метод с основной работой
 
+        self.buttonForRegistr.clicked.connect(self.reg)  # Коннектим функцию с нажатием кнопки
+
     def setupUi(self):
         self.setFixedSize(400, 439)  # Изменяем размер окна при появлении
 
@@ -63,7 +65,6 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
 
         self.buttonForRegistr.resize(130, 30)  # Меняем размер кнопки
         self.buttonForRegistr.move(self.width() // 2 - self.buttonForRegistr.width() // 2, 370)  # Двигаем кнопку
-        self.buttonForRegistr.clicked.connect(self.reg)  # Коннектим функцию с нажатием кнопки
         self.buttonForRegistr.setText("Зарегистрироваться")  # Изменяем надпись кнопки регистрации
 
     def reg(self):  # Функция регистрации пользователя
