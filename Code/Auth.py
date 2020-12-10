@@ -22,7 +22,6 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.setLayout(self.layout)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addStretch(-1)
-        self.setMinimumSize(800, 400)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
         # Создание стиля титульных кнопок

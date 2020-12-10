@@ -34,10 +34,11 @@ class TableWidget(QtWidgets.QTableWidget):
                         if self.fname != '':
                             product_id = self.root.tableWidget.item(self.root.r, 0).text()
                             self.root.db.updateProductPhoto(product_id, self.fname)
+                    else:
+                        self.edit(self.item(self.r, self.c).index)
                 except AttributeError:
                     pass
-                self.root.updateTable()
-
+                #self.root.updateTable()
 
 class shopWindow(QtWidgets.QWidget):
     def __init__(self, root):
@@ -66,26 +67,20 @@ class shopWindow(QtWidgets.QWidget):
 
     def setupUi(self):  # Основной метод
         #  Все кнопки создаются по мере работы, а не в инициализации т.к. после инициализации кнопки не хотят работать
-        self.setObjectName("Form")
         self.buttonForLK.resize(120, 28)  # Изменяем геометрию кнопки для ЛК
-        self.buttonForLK.setObjectName("pushButton")
         # self.buttonForLK.clicked.connect()  # Коннект функции к кнопке
         self.buttonForAddProduct.resize(131, 28)
         # Изменяем геометрию кнопки для создания продукта
-        self.buttonForAddProduct.setObjectName("pushButton_2")
         self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
         # Изменяем геометрию кнопки для удаления продукта
         self.buttonForCreateCheck.resize(130, 28)
         # Изменяем геометрию кнопки для создания чека
-        self.buttonForCreateCheck.setObjectName("pushButton_6")
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
         #  Изменяем геометрию поля с поиском
-        self.lineEditForSearch.setObjectName("lineEdit")
         self.lineEditForSearch.textChanged.connect(self.updateTable)
         self.tableWidget.setGeometry(QtCore.QRect(20, 110, 831, 621))
         #  Изменяем геометрию таблицы
         self.tableWidget.resize(831, 621)  # Изменяем размер таблицы
-        self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setRowCount(0)  # Очищаем все строки в таблице
         self.tableWidget.setColumnCount(7)  # Изменяем количество столбцов
         self.tableWidget.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ID'))
@@ -108,10 +103,8 @@ class shopWindow(QtWidgets.QWidget):
         self.updateTable()  # Запускаем функцию обновления таблицы
         self.checkError()
         self.label.setGeometry(QtCore.QRect(30, 80, 120, 20))  # Изменяем геометрию надписи
-        self.label.setObjectName("label")
 
         self.retranslateUi()  # Специальная функция от qt для переименовывания названий объектов
-        QtCore.QMetaObject.connectSlotsByName(self)
 
     def checkCount(self, row, column):
         if column >= 6:
@@ -155,6 +148,7 @@ class shopWindow(QtWidgets.QWidget):
                         self.tableWidget.item(self.listWarning[i - count][0],
                                               self.listWarning[i - count][1]).setForeground(QtGui.QColor(0, 0, 0))
                         if i + 1 <= len(self.listWarning):
+                            sax
                             self.listWarning.pop(i - count)
                             count += 1
                 if len(self.listWarning) == 0:
@@ -162,10 +156,10 @@ class shopWindow(QtWidgets.QWidget):
                     self.warning.hide()
                 self.tableWidget.blockSignals(False)
         except ValueError:
-            self.tableWidget.blockSignals(True)
             self.font.setBold(True)  # Изменяем ширину шрифта
             self.warning.setText('Ошибка данных')
-            self.tableWidget.item(row, column).setFont(self.font)
+            s = self.tableWidget.item(row, column)
+            s.setFont(self.font)
             self.tableWidget.item(row, column).setForeground(
                 QtGui.QColor(255, 0, 0))
             self.buttonForCreateCheck.setEnabled(False)
@@ -187,8 +181,6 @@ class shopWindow(QtWidgets.QWidget):
     def clickedRow(self, r, c):
         self.r = r
         self.c = c
-        if c == 6:
-            self.checkCount(r, c)
 
     def updateTable(self):
         self.tableWidget.blockSignals(True)
@@ -206,6 +198,10 @@ class shopWindow(QtWidgets.QWidget):
                     self.tableWidget.setRowHeight(i, 200)
                     s.setText('')
                     s.setBackground(brush)
+                elif j == 6:
+                    self.tableWidget.setItem(i, j, s)
+                    self.checkCount(self.r, self.c)
+                    continue
                 if self.id != '1':
                     if str(j) in '012345':
                         s.setFlags(QtCore.Qt.ItemIsEditable)
