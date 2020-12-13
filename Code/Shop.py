@@ -9,6 +9,31 @@ from DataBase.workFromDB import DB  # Импортируем работу с б�
 
 #  Импорт всех нужных библиотек, стилей
 
+class TableWidgetForTrans(QtWidgets.QTableWidget):
+    def __init__(self, root):
+        self.root = root
+        super(TableWidgetForTrans, self).__init__(root)
+        self.cellPressed[int, int].connect(self.root.clickedRow)
+
+    def mousePressEvent(self, event):
+        super(TableWidgetForTrans, self).mousePressEvent(event)
+        if self.root.id == '1':
+            if event.button() == QtCore.Qt.RightButton:
+                shopWindow.openDelProductWindow(self.root)
+            elif event.button() == QtCore.Qt.LeftButton:
+                try:
+                    if self.root.c == 1:
+                        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара',
+                                                                              filter='Файлы изображений (*.png *.jpg *.bmp)')
+                        if self.fname != '':
+                            product_id = self.root.tableWidget.item(self.root.r, 0).text()
+                            self.root.db.updateProductPhoto(product_id, self.fname)
+                            self.root.updateTable()
+                    else:
+                        self.edit(self.item(self.r, self.c).index)
+                except AttributeError:
+                    pass
+
 
 class TableWidget(QtWidgets.QTableWidget):
     def __init__(self, root):
@@ -34,11 +59,12 @@ class TableWidget(QtWidgets.QTableWidget):
                         if self.fname != '':
                             product_id = self.root.tableWidget.item(self.root.r, 0).text()
                             self.root.db.updateProductPhoto(product_id, self.fname)
+                            self.root.updateTable()
                     else:
                         self.edit(self.item(self.r, self.c).index)
                 except AttributeError:
                     pass
-                #self.root.updateTable()
+
 
 class shopWindow(QtWidgets.QWidget):
     def __init__(self, root):
@@ -50,7 +76,7 @@ class shopWindow(QtWidgets.QWidget):
         self.db = DB()
         self.listWarning = []
         super(shopWindow, self).__init__()
-        self.resize(869, 746)  # Изменяем размер окна
+        self.resize(1269, 746)  # Изменяем размер окна
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
         self.setMinimumHeight(self.height())  # Изменяем минимальную высоту окна
         self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
@@ -61,6 +87,7 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForCreateCheck = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
         self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
         self.tableWidget = TableWidget(self)  # Создаем таблицу
+        self.tableWidgetForTrans = TableWidgetForTrans(self)
         self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
         self.warning = QtWidgets.QLabel(self)
         self.setupUi()  # Вызов метода с основной работой
@@ -82,7 +109,7 @@ class shopWindow(QtWidgets.QWidget):
         #  Изменяем геометрию таблицы
         self.tableWidget.resize(831, 621)  # Изменяем размер таблицы
         self.tableWidget.setRowCount(0)  # Очищаем все строки в таблице
-        self.tableWidget.setColumnCount(7)  # Изменяем количество столбцов
+        self.tableWidget.setColumnCount(7)
         self.tableWidget.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ID'))
         self.tableWidget.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('ФОТО'))
         self.tableWidget.setHorizontalHeaderItem(2, QtWidgets.QTableWidgetItem('БРЕНД'))
@@ -90,7 +117,10 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(4, QtWidgets.QTableWidgetItem('ЦЕНА'))
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
         self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
+        self.tableWidgetForTrans.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ТОВАР'))
         self.tableWidget.setColumnWidth(1, 200)
+        self.tableWidgetForTrans.setColumnCount(2)
+        self.tableWidgetForTrans.move(30, self.tableWidget.y())
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
         self.tableWidget.cellChanged.connect(self.updateProduct)
@@ -102,8 +132,6 @@ class shopWindow(QtWidgets.QWidget):
         self.font.setFamily("Roboto Light")  # Изменяем семейство шрифта
         self.updateTable()  # Запускаем функцию обновления таблицы
         self.checkError()
-        self.label.setGeometry(QtCore.QRect(30, 80, 120, 20))  # Изменяем геометрию надписи
-
         self.retranslateUi()  # Специальная функция от qt для переименовывания названий объектов
 
     def checkCount(self, row, column):
@@ -229,16 +257,17 @@ class shopWindow(QtWidgets.QWidget):
         self.db.updateProduct(id, brand, name, price, count, required)
 
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
-        self.tableWidget.resize(self.width() - (self.width() // 100 * 5),
+        self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
                                 self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
-        self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2, self.tableWidget.y())
-        self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140, self.lineEditForSearch.height())
-        self.lineEditForSearch.move(self.width() // 2 - self.lineEditForSearch.width() // 2 + 70,
+        self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2 + 200, self.tableWidget.y())
+        self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140 - 400, self.lineEditForSearch.height())
+        self.lineEditForSearch.move(self.tableWidget.x() + 140,
                                     self.lineEditForSearch.y())
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
-        self.buttonForCreateCheck.move(self.width() // 2 - self.buttonForCreateCheck.width() // 2, 30)
+        self.buttonForCreateCheck.move(self.width() // 2 - self.buttonForCreateCheck.width() // 2 + 200, 30)
+        self.label.setGeometry(QtCore.QRect(self.tableWidget.x(), 80, 120, 20))  # Изменяем геометрию надписи
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QtCore.QCoreApplication.translate
