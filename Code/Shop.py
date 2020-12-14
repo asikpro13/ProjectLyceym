@@ -78,6 +78,7 @@ class shopWindow(QtWidgets.QWidget):
         if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
             self.buttonForAddProduct.hide()
         self.buttonForCreateCheck = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
+        self.buttonPurchases = QtWidgets.QPushButton(self)
         self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
         self.tableWidget = TableWidget(self)  # Создаем таблицу
         self.tableWidgetForTrans = TableWidgetForTrans(self)
@@ -94,6 +95,10 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
         # Изменяем геометрию кнопки для удаления продукта
         self.buttonForCreateCheck.resize(130, 28)
+
+        self.buttonPurchases.setText('Купить')
+        self.buttonPurchases.adjustSize()
+        self.buttonPurchases.resize(self.buttonPurchases.width(), 30)
         # Изменяем геометрию кнопки для создания чека
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
         #  Изменяем геометрию поля с поиском
@@ -116,6 +121,9 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidgetForTrans.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ТОВАР'))
         self.tableWidgetForTrans.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('УДАЛИТЬ'))
         self.tableWidgetForTrans.move(self.tableWidget.x(), self.tableWidget.y())
+        self.tableWidgetForTrans.setColumnWidth(0, 200)
+        self.tableWidgetForTrans.setColumnWidth(1, 200)
+        self.buttonPurchases.move(self.tableWidgetForTrans.width() // 2 + self.tableWidgetForTrans.x(), 30)
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
         self.tableWidget.cellChanged.connect(self.updateProduct)
@@ -269,9 +277,12 @@ class shopWindow(QtWidgets.QWidget):
 
         self.label.setGeometry(QtCore.QRect(self.tableWidget.x(), 80, 120, 20))  # Изменяем геометрию надписи
 
-        self.tableWidgetForTrans.resize(self.tableWidget.x() - 40, self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
+        self.tableWidgetForTrans.resize(self.tableWidget.x() - 40, self.height() - (self.height() // 100 * 5) -
+                                        self.tableWidget.y() + 20)
 
         self.tableWidgetForTrans.move(20, self.tableWidget.y())
+
+        self.buttonPurchases.move(self.tableWidgetForTrans.width() // 2 - self.tableWidgetForTrans.x(), 30)
 
     def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
         _translate = QtCore.QCoreApplication.translate
