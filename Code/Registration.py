@@ -59,9 +59,11 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
         self.labelPassword.setText("Пароль")
 
         self.lineEditForLogin.setGeometry(QRect(60, 210, 270, 30))
+        self.lineEditForLogin.returnPressed.connect(self.reg)
 
         self.lineEditForPassword.setGeometry(QRect(60, 320, 271, 30))
         self.lineEditForPassword.setEchoMode(QLineEdit.Password)  # Делаем так чтобы наш пароль был не виден
+        self.lineEditForPassword.returnPressed.connect(self.reg)
 
         self.buttonForRegistr.resize(130, 30)  # Меняем размер кнопки
         self.buttonForRegistr.move(self.width() // 2 - self.buttonForRegistr.width() // 2, 370)  # Двигаем кнопку

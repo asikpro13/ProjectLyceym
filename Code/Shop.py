@@ -120,6 +120,7 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidgetForTrans.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ТОВАР'))
         self.tableWidget.setColumnWidth(1, 200)
         self.tableWidgetForTrans.setColumnCount(2)
+        self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
         self.tableWidgetForTrans.move(30, self.tableWidget.y())
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
@@ -274,6 +275,6 @@ class shopWindow(QtWidgets.QWidget):
         self.setWindowTitle(_translate("Form", "Касса"))
         self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
         self.buttonForAddProduct.setText(_translate("Form", "Добавить продукт"))
-        self.buttonForCreateCheck.setText(_translate("Form", "Совершить покупку"))
+        self.buttonForCreateCheck.setText(_translate("Form", "Провести транзакцию"))
         self.label.setText(_translate("Form", "Поиск продукта:"))
     # Изменяем текст в объетках по смыслу
