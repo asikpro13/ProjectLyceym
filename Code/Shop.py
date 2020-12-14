@@ -73,11 +73,10 @@ class shopWindow(QtWidgets.QWidget):
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
         self.setMinimumHeight(self.height())  # Изменяем минимальную высоту окна
         self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
-        self.buttonForLK.clicked.connect(self.openLKWindow)
         self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
         if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
             self.buttonForAddProduct.hide()
-        self.buttonForCreateCheck = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
+        self.buttonForCreateTransaction = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
         self.buttonPurchases = QtWidgets.QPushButton(self)
         self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
         self.tableWidget = TableWidget(self)  # Создаем таблицу
@@ -85,6 +84,9 @@ class shopWindow(QtWidgets.QWidget):
         self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
         self.warning = QtWidgets.QLabel(self)
         self.setupUi()  # Вызов метода с основной работой
+
+        self.buttonForLK.clicked.connect(self.openLKWindow)
+        self.buttonForCreateTransaction.clicked.connect(self.transaction)
 
     def setupUi(self):  # Основной метод
         #  Все кнопки создаются по мере работы, а не в инициализации т.к. после инициализации кнопки не хотят работать
@@ -94,7 +96,7 @@ class shopWindow(QtWidgets.QWidget):
         # Изменяем геометрию кнопки для создания продукта
         self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
         # Изменяем геометрию кнопки для удаления продукта
-        self.buttonForCreateCheck.resize(130, 28)
+        self.buttonForCreateTransaction.resize(130, 28)
 
         self.buttonPurchases.setText('Купить')
         self.buttonPurchases.adjustSize()
@@ -170,7 +172,7 @@ class shopWindow(QtWidgets.QWidget):
                             self.font)
                         self.tableWidget.item(self.listWarning[i - count][0],
                                               self.listWarning[i - count][1]).setForeground(QtGui.QColor(255, 0, 0))
-                        self.buttonForCreateCheck.setEnabled(False)
+                        self.buttonForCreateTransaction.setEnabled(False)
                         self.warning.show()
                     else:
                         self.font.setBold(False)
@@ -182,7 +184,7 @@ class shopWindow(QtWidgets.QWidget):
                             self.listWarning.pop(i - count)
                             count += 1
                 if len(self.listWarning) == 0:
-                    self.buttonForCreateCheck.setEnabled(True)
+                    self.buttonForCreateTransaction.setEnabled(True)
                     self.warning.hide()
                 self.tableWidget.blockSignals(False)
         except ValueError:
@@ -192,7 +194,7 @@ class shopWindow(QtWidgets.QWidget):
             s.setFont(self.font)
             self.tableWidget.item(row, column).setForeground(
                 QtGui.QColor(255, 0, 0))
-            self.buttonForCreateCheck.setEnabled(False)
+            self.buttonForCreateTransaction.setEnabled(False)
             self.warning.show()
             self.tableWidget.blockSignals(False)
 
@@ -258,6 +260,9 @@ class shopWindow(QtWidgets.QWidget):
         required = self.tableWidget.item(row, 6).text()
         self.db.updateProduct(id, brand, name, price, count, required)
 
+    def transaction(self):
+        print('11')
+
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
                                 self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
@@ -273,7 +278,7 @@ class shopWindow(QtWidgets.QWidget):
 
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
 
-        self.buttonForCreateCheck.move(self.width() // 2 - self.buttonForCreateCheck.width() // 2 + 200, 30)
+        self.buttonForCreateTransaction.move(self.width() // 2 - self.buttonForCreateTransaction.width() // 2 + 200, 30)
 
         self.label.setGeometry(QtCore.QRect(self.tableWidget.x(), 80, 120, 20))  # Изменяем геометрию надписи
 
@@ -289,6 +294,6 @@ class shopWindow(QtWidgets.QWidget):
         self.setWindowTitle(_translate("Form", "Касса"))
         self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
         self.buttonForAddProduct.setText(_translate("Form", "Добавить продукт"))
-        self.buttonForCreateCheck.setText(_translate("Form", "Провести транзакцию"))
+        self.buttonForCreateTransaction.setText(_translate("Form", "Провести транзакцию"))
         self.label.setText(_translate("Form", "Поиск продукта:"))
     # Изменяем текст в объетках по смыслу
