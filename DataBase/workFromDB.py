@@ -92,6 +92,11 @@ class DB:
         self.cur.execute('update Auth set admin = 1 where login = ?', (login,))
         self.commitConnection()
 
+    def getTransactions(self):
+        result = self.cur.execute('select * from product where product_count > product_required '
+                                  'and product_required != 0').fetchall()
+        return result
+
     def commitConnection(self):  # коммит
         self.connect.commit()
 

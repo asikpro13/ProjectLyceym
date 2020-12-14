@@ -79,7 +79,7 @@ class addProductWindow(QtWidgets.QDialog):
 
     def createProduct(self):
         try:
-            self.db.addProduct(self.fname, self.lineEdit.text(), self.lineEdit_2.text(), self.spinBox.text(), self.spinBox_2.text())
+            self.db.addProduct(self.fname, self.lineEdit.text(), self.lineEdit_2.text(), self.spinBox_2.text(), self.spinBox.text())
             self.close()
         except FileNotFoundError:
             self.warning.show()

@@ -261,7 +261,19 @@ class shopWindow(QtWidgets.QWidget):
         self.db.updateProduct(id, brand, name, price, count, required)
 
     def transaction(self):
-        print('11')
+        self.tableWidgetForTrans.setRowCount(0)
+        result = self.db.getTransactions()
+        for k in range(len(result)):
+            print(result)
+            name = result[k][2] + ' ' + result[k][3] + ' в количестве ' + str(result[k][6])
+            for i, row in enumerate([(name, '')]):
+                self.tableWidgetForTrans.setRowCount(
+                    self.tableWidgetForTrans.rowCount() + 1)
+                for j, elem in enumerate(row):
+                    s = QTableWidgetItem(str(elem))
+                    if str(j) in '0':
+                        s.setFlags(QtCore.Qt.ItemIsEditable)
+                    self.tableWidgetForTrans.setItem(i, j, s)
 
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
@@ -280,7 +292,7 @@ class shopWindow(QtWidgets.QWidget):
 
         self.buttonForCreateTransaction.move(self.width() // 2 - self.buttonForCreateTransaction.width() // 2 + 200, 30)
 
-        self.label.setGeometry(QtCore.QRect(self.tableWidget.x(), 80, 120, 20))  # Изменяем геометрию надписи
+        self.label.setGeometry(QtCore.QRect(self.tableWidget.x(), 80, 120, 20))
 
         self.tableWidgetForTrans.resize(self.tableWidget.x() - 40, self.height() - (self.height() // 100 * 5) -
                                         self.tableWidget.y() + 20)
