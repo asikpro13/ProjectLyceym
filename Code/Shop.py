@@ -17,13 +17,12 @@ class TableWidgetForTrans(QtWidgets.QTableWidget):
 
     def mouseDoubleClickEvent(self, event):
         super(TableWidgetForTrans, self).mousePressEvent(event)
-        if self.root.id == '1':
-            if event.button() == QtCore.Qt.LeftButton:
-                try:
-                    if self.root.c == 1:
-                        self.root.tableWidgetForTrans.removeRow(self.root.r)
-                except AttributeError:
-                    pass
+        if event.button() == QtCore.Qt.LeftButton:
+            try:
+                if self.root.c == 1:
+                    self.root.tableWidgetForTrans.removeRow(self.root.r)
+            except AttributeError:
+                pass
 
 
 class TableWidget(QtWidgets.QTableWidget):
