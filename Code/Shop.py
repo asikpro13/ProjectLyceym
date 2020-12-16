@@ -237,6 +237,7 @@ class shopWindow(QtWidgets.QWidget):
                         s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidget.setItem(i, j, s)
         self.tableWidget.blockSignals(False)
+        self.checkError()
 
     def checkError(self):
         for i in range(self.tableWidget.rowCount()):
@@ -247,13 +248,14 @@ class shopWindow(QtWidgets.QWidget):
 
     def updateProduct(self, row, column):
         self.showError(row, column)
-        id = self.tableWidget.item(row, 0).text()
+        id_product = self.tableWidget.item(row, 0).text()
         brand = self.tableWidget.item(row, 2).text()
         name = self.tableWidget.item(row, 3).text()
         price = self.tableWidget.item(row, 4).text()
         count = self.tableWidget.item(row, 5).text()
         required = self.tableWidget.item(row, 6).text()
-        self.db.updateProduct(id, brand, name, price, count, required)
+        self.db.updateProduct(id_product, brand, name, price, count, required)
+        self.checkError()
 
     def transaction(self):
         spisok = []
@@ -261,7 +263,7 @@ class shopWindow(QtWidgets.QWidget):
         result = self.db.getTransactions()
         for k in range(len(result)):
             name = result[k][2] + ' ' + result[k][3] + ' в количестве ' + str(result[k][6]) + ' по цене ' \
-                   + str(result[k][5] * result[k][4])
+                   + str(result[k][6] * result[k][4])
             spisok.append((name, ''))
         for i, row in enumerate(spisok):
             self.tableWidgetForTrans.setRowCount(
@@ -275,8 +277,9 @@ class shopWindow(QtWidgets.QWidget):
     def buy(self):
         for i in range(self.tableWidgetForTrans.rowCount()):
             transactions = self.tableWidgetForTrans.item(i, 0).text().split(' ')
-            self.db.buyProduct(transactions)
+            self.db.buyProduct(transactions, self.login)
         self.updateTable()
+
 
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,

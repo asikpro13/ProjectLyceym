@@ -80,7 +80,7 @@ class DB:
             pass
 
     def getStats(self, user_login):
-        result = self.cur.execute('select purchases, Money, counterProducts from Auth where login = ?',
+        result = self.cur.execute('select purchases, money, counterProducts from Auth where login = ?',
                                   (user_login,)).fetchall()
         return result[0]
 
@@ -97,8 +97,10 @@ class DB:
                                   'and product_required != 0').fetchall()
         return result
 
-    def buyProduct(self, transactions):
+    def buyProduct(self, transactions, login):
         self.cur.execute('update product set product_count = product_count - ?', (transactions[4],))
+        self.cur.execute('update Auth set purchases = purchases + 1, money = money + ?,'
+                         ' counterProducts = counterProducts + ? where login = ?', (int(transactions[4]) * float(transactions[7]), int(transactions[4]), login,))
         self.commitConnection()
 
     def commitConnection(self):  # коммит
