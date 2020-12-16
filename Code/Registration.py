@@ -28,6 +28,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
         self.pressing = False
         # Создание стиля титульных кнопок
         self.id = QLabel(self)
+        self.login = QLabel(self)
         self.labelLogin = QLabel(self)  # Создаем надпись логина
         self.labelRegistr = QLabel(self)  # Создаем надпись регистрации
         self.labelPassword = QLabel(self)  # Создаем надпись пароля
@@ -79,6 +80,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
             self.labelWarRegistr.setText('Логин слишком короткий')
         else:
             self.db.registrationUser(self.lineEditForLogin.text(), self.lineEditForPassword.text())
+            self.login.setText(str(self.lineEditForLogin.text()))
             self.close()
             self.root.close()
             # Закрываем рабочее и родительское окно
