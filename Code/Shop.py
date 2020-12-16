@@ -15,15 +15,13 @@ class TableWidgetForTrans(QtWidgets.QTableWidget):
         super(TableWidgetForTrans, self).__init__(root)
         self.cellPressed[int, int].connect(self.root.clickedRow)
 
-    def mousePressEvent(self, event):
+    def mouseDoubleClickEvent(self, event):
         super(TableWidgetForTrans, self).mousePressEvent(event)
         if self.root.id == '1':
             if event.button() == QtCore.Qt.LeftButton:
                 try:
                     if self.root.c == 1:
-                        print('1')
-                    else:
-                        self.edit(self.item(self.r, self.c).index)
+                        self.root.tableWidgetForTrans.removeRow(self.root.r)
                 except AttributeError:
                     pass
 
@@ -87,6 +85,7 @@ class shopWindow(QtWidgets.QWidget):
 
         self.buttonForLK.clicked.connect(self.openLKWindow)
         self.buttonForCreateTransaction.clicked.connect(self.transaction)
+        self.buttonPurchases.clicked.connect(self.buy)
 
     def setupUi(self):  # Основной метод
         #  Все кнопки создаются по мере работы, а не в инициализации т.к. после инициализации кнопки не хотят работать
@@ -101,15 +100,11 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonPurchases.setText('Купить')
         self.buttonPurchases.adjustSize()
         self.buttonPurchases.resize(self.buttonPurchases.width(), 30)
-        # Изменяем геометрию кнопки для создания чека
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
-        #  Изменяем геометрию поля с поиском
         self.lineEditForSearch.textChanged.connect(self.updateTable)
         self.tableWidget.setGeometry(QtCore.QRect(20, 110, 831, 621))
-        #  Изменяем геометрию таблицы
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
                                 self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
-        self.tableWidget.setRowCount(0)  # Очищаем все строки в таблице
         self.tableWidget.setColumnCount(7)
         self.tableWidget.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ID'))
         self.tableWidget.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('ФОТО'))
@@ -261,26 +256,35 @@ class shopWindow(QtWidgets.QWidget):
         self.db.updateProduct(id, brand, name, price, count, required)
 
     def transaction(self):
+        spisok = []
         self.tableWidgetForTrans.setRowCount(0)
         result = self.db.getTransactions()
         for k in range(len(result)):
-            print(result)
-            name = result[k][2] + ' ' + result[k][3] + ' в количестве ' + str(result[k][6])
-            for i, row in enumerate([(name, '')]):
-                self.tableWidgetForTrans.setRowCount(
-                    self.tableWidgetForTrans.rowCount() + 1)
-                for j, elem in enumerate(row):
-                    s = QTableWidgetItem(str(elem))
-                    if str(j) in '0':
-                        s.setFlags(QtCore.Qt.ItemIsEditable)
-                    self.tableWidgetForTrans.setItem(i, j, s)
+            name = result[k][2] + ' ' + result[k][3] + ' в количестве ' + str(result[k][6]) + ' по цене ' \
+                   + str(result[k][5] * result[k][4])
+            spisok.append((name, ''))
+        for i, row in enumerate(spisok):
+            self.tableWidgetForTrans.setRowCount(
+                self.tableWidgetForTrans.rowCount() + 1)
+            for j, elem in enumerate(row):
+                s = QTableWidgetItem(str(elem))
+                if str(j) in '0':
+                    s.setFlags(QtCore.Qt.ItemIsEditable)
+                self.tableWidgetForTrans.setItem(i, j, s)
+
+    def buy(self):
+        for i in range(self.tableWidgetForTrans.rowCount()):
+            transactions = self.tableWidgetForTrans.item(i, 0).text().split(' ')
+            self.db.buyProduct(transactions)
+        self.updateTable()
 
     def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
                                 self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
         self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2 + 200, self.tableWidget.y())
 
-        self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140 - 400, self.lineEditForSearch.height())
+        self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140 - 400,
+                                      self.lineEditForSearch.height())
         self.lineEditForSearch.move(self.tableWidget.x() + 140,
                                     self.lineEditForSearch.y())
 

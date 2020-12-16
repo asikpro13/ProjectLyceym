@@ -93,9 +93,13 @@ class DB:
         self.commitConnection()
 
     def getTransactions(self):
-        result = self.cur.execute('select * from product where product_count > product_required '
+        result = self.cur.execute('select * from product where product_count >= product_required '
                                   'and product_required != 0').fetchall()
         return result
+
+    def buyProduct(self, transactions):
+        self.cur.execute('update product set product_count = product_count - ?', (transactions[4],))
+        self.commitConnection()
 
     def commitConnection(self):  # коммит
         self.connect.commit()
