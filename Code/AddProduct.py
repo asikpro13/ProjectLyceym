@@ -7,7 +7,7 @@ class addProductWindow(QtWidgets.QDialog):
     def __init__(self, root):
         self.root = root
         self.root.setEnabled(False)
-        self.db = DB()
+        self.db = self.root.db
         super(addProductWindow, self).__init__()
         self.setupUi()
 

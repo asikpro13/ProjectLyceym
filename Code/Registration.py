@@ -14,7 +14,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
         self.root = root  # Создаем экземпляр родительского окна
         self.font = root.font
         self.root.setEnabled(False)
-        self.db = DB()
+        self.db = self.root.db
         super(RegistrationWindow, self).__init__()
         #  Наследуем все необходимые объекты
         self.setWindowTitle("Регистрация")  # Изменяем название титульного окна

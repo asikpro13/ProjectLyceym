@@ -237,9 +237,9 @@ class shopWindow(QtWidgets.QWidget):
 
     def checkError(self):
         for i in range(self.tableWidget.rowCount()):
-            if int(self.tableWidget.item(i, 5).text()) < int(self.tableWidget.item(i, 6).text()):
-                if [i, 6] not in self.listWarning:
-                    self.listWarning.append([i, 6])
+            if int(self.tableWidget.item(i, 5).text()) < int(self.tableWidget.item(i, 6).text()) \
+                    and [i, 6] not in self.listWarning:
+                self.listWarning.append([i, 6])
 
     def updateProduct(self, row, column):
         self.showError(row, column)
@@ -292,3 +292,6 @@ class shopWindow(QtWidgets.QWidget):
                                         self.tableWidget.y() + 20)
         self.tableWidgetForTrans.move(20, self.tableWidget.y())
         self.buttonPurchases.move(self.tableWidgetForTrans.width() // 2 - self.tableWidgetForTrans.x(), 30)
+
+    def closeEvent(self, event):
+        self.db.closeConnection()

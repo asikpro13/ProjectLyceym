@@ -8,7 +8,7 @@ class DelWindow(QDialog):  # Окно авторизации
     def __init__(self, root):  # Инициализация
         self.root = root
         self.root.setEnabled(False)
-        self.db = DB()
+        self.db = self.root.db
         super(DelWindow, self).__init__()
         self.layout = QVBoxLayout()
         self.layout.addWidget(MyBar(self))
