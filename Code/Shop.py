@@ -30,10 +30,6 @@ class TableWidget(QtWidgets.QTableWidget):
         super(TableWidget, self).__init__(root)
         self.cellPressed[int, int].connect(self.root.clickedRow)
 
-    def columnRow(self, r, c):
-        self.r = r
-        self.c = c
-
     def mousePressEvent(self, event):
         super(TableWidget, self).mousePressEvent(event)
         if self.root.id == '1':
@@ -42,8 +38,9 @@ class TableWidget(QtWidgets.QTableWidget):
             elif event.button() == QtCore.Qt.LeftButton:
                 try:
                     if self.root.c == 1:
-                        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара',
-                                                                              filter='Файлы изображений (*.png *.jpg *.bmp)')
+                        self.fname, _ = QtWidgets.QFileDialog.\
+                            getOpenFileName(self, 'Открыть изображение товара',
+                                            filter='Файлы изображений (*.png *.jpg *.bmp)')
                         if self.fname != '':
                             product_id = self.root.tableWidget.item(self.root.r, 0).text()
                             self.root.db.updateProductPhoto(product_id, self.fname)
@@ -78,30 +75,34 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidgetForTrans = TableWidgetForTrans(self)
         self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
         self.warning = QtWidgets.QLabel(self)
-        self.setupUi()  # Вызов метода с основной работой
+        self.font = QtGui.QFont()  # Создаем объект шрифта
 
         self.buttonForLK.clicked.connect(self.openLKWindow)
         self.buttonForCreateTransaction.clicked.connect(self.transaction)
+        self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
         self.buttonPurchases.clicked.connect(self.buy)
         self.tableWidget.cellChanged.connect(self.updateProduct)
+        self.lineEditForSearch.textChanged.connect(self.updateTable)
+
+        self.setupUi()  # Вызов метода с основной работой
 
         if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
             self.buttonForAddProduct.hide()
 
+        self.setWindowTitle("Касса")
+
     def setupUi(self):  # Основной метод
         self.buttonForLK.resize(120, 28)  # Изменяем геометрию кнопки для ЛК
-        # self.buttonForLK.clicked.connect()  # Коннект функции к кнопке
+        self.buttonForLK.setText("Личный кабинет")
         self.buttonForAddProduct.resize(131, 28)
+        self.buttonForAddProduct.setText("Добавить продукт")
         # Изменяем геометрию кнопки для создания продукта
-        self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
-        # Изменяем геометрию кнопки для удаления продукта
         self.buttonForCreateTransaction.resize(130, 28)
-
+        self.buttonForCreateTransaction.setText("Провести транзакцию")
         self.buttonPurchases.setText('Купить')
         self.buttonPurchases.adjustSize()
         self.buttonPurchases.resize(self.buttonPurchases.width(), 30)
         self.lineEditForSearch.setGeometry(QtCore.QRect(160, 80, 690, 22))
-        self.lineEditForSearch.textChanged.connect(self.updateTable)
         self.tableWidget.setGeometry(QtCore.QRect(20, 110, 831, 621))
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
                                 self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
@@ -114,24 +115,23 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(5, QtWidgets.QTableWidgetItem('КОЛИЧЕСТВО'))
         self.tableWidget.setHorizontalHeaderItem(6, QtWidgets.QTableWidgetItem('ТРЕБУЕТСЯ'))
         self.tableWidget.setColumnWidth(1, 200)
+        self.tableWidget.setColumnWidth(0, 50)
         self.tableWidgetForTrans.setColumnCount(2)
         self.tableWidgetForTrans.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('ТОВАР'))
         self.tableWidgetForTrans.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('УДАЛИТЬ'))
         self.tableWidgetForTrans.move(self.tableWidget.x(), self.tableWidget.y())
         self.tableWidgetForTrans.setColumnWidth(0, 200)
-        self.tableWidgetForTrans.setColumnWidth(1, 200)
+        self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.buttonPurchases.move(self.tableWidgetForTrans.width() // 2 + self.tableWidgetForTrans.x(), 30)
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
         self.warning.setText('Предупреждение')
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
         self.warning.hide()
-        #  Изменяем названия столбцов
-        self.font = QtGui.QFont()  # Создаем объект шрифта
+        self.label.setText("Поиск продукта:")
         self.font.setFamily("Roboto Light")  # Изменяем семейство шрифта
         self.updateTable()  # Запускаем функцию обновления таблицы
         self.checkError()
-        self.retranslateUi()  # Специальная функция от qt для переименовывания названий объектов
 
     def checkCount(self, row, column):
         if column >= 6:
@@ -208,7 +208,7 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.blockSignals(True)
         self.tableWidget.setRowCount(0)
         request = self.lineEditForSearch.text()
-        res = self.db.updateTableRequest(request)
+        res = self.db.findTableRequest(request)
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
@@ -279,34 +279,16 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
                                 self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
         self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2 + 200, self.tableWidget.y())
-
         self.lineEditForSearch.resize(self.width() - (self.width() // 100 * 5) - 140 - 400,
                                       self.lineEditForSearch.height())
         self.lineEditForSearch.move(self.tableWidget.x() + 140,
                                     self.lineEditForSearch.y())
-
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
-
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
-
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
-
         self.buttonForCreateTransaction.move(self.width() // 2 - self.buttonForCreateTransaction.width() // 2 + 200, 30)
-
         self.label.setGeometry(QtCore.QRect(self.tableWidget.x(), 80, 120, 20))
-
         self.tableWidgetForTrans.resize(self.tableWidget.x() - 40, self.height() - (self.height() // 100 * 5) -
                                         self.tableWidget.y() + 20)
-
         self.tableWidgetForTrans.move(20, self.tableWidget.y())
-
         self.buttonPurchases.move(self.tableWidgetForTrans.width() // 2 - self.tableWidgetForTrans.x(), 30)
-
-    def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
-        _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Form", "Касса"))
-        self.buttonForLK.setText(_translate("Form", "Личный кабинет"))
-        self.buttonForAddProduct.setText(_translate("Form", "Добавить продукт"))
-        self.buttonForCreateTransaction.setText(_translate("Form", "Провести транзакцию"))
-        self.label.setText(_translate("Form", "Поиск продукта:"))
-    # Изменяем текст в объетках по смыслу

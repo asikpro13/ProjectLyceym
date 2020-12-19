@@ -1,10 +1,11 @@
 import sqlite3
 import os
-#  Импорт всех нужных библиотек, стилей
 import shutil
 
 
-class DB:
+#  Импорт всех нужных библиотек, стилей
+
+class DB:  # Класс для работы с базой данных
     def __init__(self):
         self.connect = sqlite3.connect('../DataBase/auth.db')  # Создаем соединение
         self.cur = self.connect.cursor()  # Создаем курсор
@@ -19,7 +20,7 @@ class DB:
         name = '../Image/DBImage/' + path[path.rfind('/') + 1:]
         self.cur.execute('INSERT INTO product (product_photo, product_brand, product_name, product_price,'
                          ' product_count, product_required) VALUES (?, ?, ?, ?, ?, ?)',
-                         (name, brand, model, price, count, 0, ))
+                         (name, brand, model, price, count, 0,))
         self.commitConnection()
         # Проводим запрос
 
@@ -44,31 +45,31 @@ class DB:
                          'product_name = ?', (int(transactions[4]), int(transactions[0]), transactions[1],))
         self.cur.execute('update Auth set purchases = purchases + 1, money = money + ?,'
                          ' counterProducts = counterProducts + ? where login = ?',
-                         (int(transactions[4]) * float(transactions[7]), int(transactions[4]), login,))
+                         (float(transactions[7]), int(transactions[4]), login,))
         self.commitConnection()
 
-    def updateTableRequest(self, text):
+    def findTableRequest(self, text):  # Поиск по таблице
         result = self.cur.execute('select * from product where product_brand like ? or product_name like ?',
                                   ('%' + str(text) + '%', '%' + str(text) + '%',)).fetchall()
         return result
 
-    def updateProductPhoto(self, product_id, path):
+    def updateProductPhoto(self, product_id, path):  # Обновление фотографии
         self.delPhoto(product_id)
         self.savePhoto(path)
         path = '../Image/DBImage/' + path[path.rfind('/') + 1:]
         self.cur.execute('update product set product_photo = ? where product_id = ?', (path, product_id))
         self.commitConnection()
 
-    def checkUser(self, login, password):
+    def checkUser(self, login, password):  # Проверка пользователя на существование
         result = self.cur.execute("select * from Auth where login = ? and password = ?",
                                   (login, password,)).fetchall()
         return result
 
-    def registrationUser(self, login, password):
+    def registrationUser(self, login, password):  # Зарегистрировать пользователя
         self.cur.execute('INSERT INTO Auth (login, password, admin) VALUES (?, ?, ?)', (login, password, 0,))
         self.commitConnection()
 
-    def delPhoto(self, product_id):
+    def delPhoto(self, product_id):  # Удалить фото если оно не используется
         result = self.cur.execute('select product_photo from product where product_id = ?', (product_id,)).fetchone()
         result = self.cur.execute('select product_photo from product where product_photo = ?', (result[0],)).fetchall()
         try:
@@ -80,7 +81,7 @@ class DB:
             pass
 
     @staticmethod
-    def savePhoto(path):
+    def savePhoto(path):  # Сохранить фото в папку с приложением
         try:
             shutil.copy(path, '../Image/DBImage/')
         except FileNotFoundError:
@@ -88,21 +89,21 @@ class DB:
         except shutil.SameFileError:
             pass
 
-    def getStats(self, user_login):
+    def getStats(self, user_login):  # Получить статистику для user_login пользователя
         result = self.cur.execute('select purchases, money, counterProducts from Auth where login = ?',
                                   (user_login,)).fetchall()
         return result[0]
 
-    def getUsers(self):
+    def getUsers(self):  # Получить всех пользователей
         result = self.cur.execute('select login from Auth').fetchall()
         return result
 
-    def getTransactions(self):
+    def getTransactions(self):  # Получчить список продуктов готовых для транзакции
         result = self.cur.execute('select * from product where product_count >= product_required '
                                   'and product_required != 0').fetchall()
         return result
 
-    def setAdmin(self, login):
+    def setAdmin(self, login):  # Назначить администратора
         self.cur.execute('update Auth set admin = 1 where login = ?', (login,))
         self.commitConnection()
 
