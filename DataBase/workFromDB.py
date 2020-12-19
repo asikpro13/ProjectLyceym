@@ -9,6 +9,11 @@ class DB:
         self.connect = sqlite3.connect('../DataBase/auth.db')  # Создаем соединение
         self.cur = self.connect.cursor()  # Создаем курсор
 
+    def auth(self, login, password):
+        result = self.cur.execute("select * from Auth where login = ? and password = ?",
+                                  (login, password,)).fetchall()
+        return result
+
     def addProduct(self, path, brand, model, price, count):  # Функция для работы с базой данных.
         self.savePhoto(path)
         name = '../Image/DBImage/' + path[path.rfind('/') + 1:]
@@ -29,20 +34,23 @@ class DB:
         self.cur.execute('delete from product where product_id = ?', (product_id,))
         self.commitConnection()
 
-    def auth(self, login, password):
-        result = self.cur.execute("select * from Auth where login = ? and password = ?",
-                                  (login, password,)).fetchall()
-        return result
+    def updateProduct(self, product_id, brand, name, price, count, required):
+        self.cur.execute('update product set product_brand = ?, product_name = ?, product_price = ?, product_count = ?,'
+                         'product_required = ? where product_id = ?', (brand, name, price, count, required, product_id))
+        self.commitConnection()
+
+    def buyProduct(self, transactions, login):
+        self.cur.execute('update product set product_count = product_count - ? where product_brand = ? and '
+                         'product_name = ?', (int(transactions[4]), int(transactions[0]), transactions[1],))
+        self.cur.execute('update Auth set purchases = purchases + 1, money = money + ?,'
+                         ' counterProducts = counterProducts + ? where login = ?',
+                         (int(transactions[4]) * float(transactions[7]), int(transactions[4]), login,))
+        self.commitConnection()
 
     def updateTableRequest(self, text):
         result = self.cur.execute('select * from product where product_brand like ? or product_name like ?',
                                   ('%' + str(text) + '%', '%' + str(text) + '%',)).fetchall()
         return result
-
-    def updateProduct(self, product_id, brand, name, price, count, required):
-        self.cur.execute('update product set product_brand = ?, product_name = ?, product_price = ?, product_count = ?,'
-                         'product_required = ? where product_id = ?', (brand, name, price, count, required, product_id))
-        self.commitConnection()
 
     def updateProductPhoto(self, product_id, path):
         self.delPhoto(product_id)
@@ -71,7 +79,8 @@ class DB:
         except PermissionError:
             pass
 
-    def savePhoto(self, path):
+    @staticmethod
+    def savePhoto(path):
         try:
             shutil.copy(path, '../Image/DBImage/')
         except FileNotFoundError:
@@ -88,21 +97,13 @@ class DB:
         result = self.cur.execute('select login from Auth').fetchall()
         return result
 
-    def setAdmin(self, login):
-        self.cur.execute('update Auth set admin = 1 where login = ?', (login,))
-        self.commitConnection()
-
     def getTransactions(self):
         result = self.cur.execute('select * from product where product_count >= product_required '
                                   'and product_required != 0').fetchall()
         return result
 
-    def buyProduct(self, transactions, login):
-        self.cur.execute('update product set product_count = product_count - ? where product_brand = ? and '
-                         'product_name = ?', (int(transactions[4]), int(transactions[0]), transactions[1],))
-        self.cur.execute('update Auth set purchases = purchases + 1, money = money + ?,'
-                         ' counterProducts = counterProducts + ? where login = ?',
-                         (int(transactions[4]) * float(transactions[7]), int(transactions[4]), login,))
+    def setAdmin(self, login):
+        self.cur.execute('update Auth set admin = 1 where login = ?', (login,))
         self.commitConnection()
 
     def commitConnection(self):  # коммит
