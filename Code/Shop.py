@@ -161,7 +161,6 @@ class shopWindow(QtWidgets.QWidget):
                                                          self.listWarning[i - count][1]).text()) < 0:
                         self.font.setBold(True)  # Изменяем ширину шрифта
                         self.warning.setText('Ошибка данных')
-
                         self.tableWidget.item(self.listWarning[i - count][0],
                                               self.listWarning[i - count][1]).setForeground(QtGui.QColor(255, 0, 0))
                         self.buttonForCreateTransaction.setEnabled(False)
@@ -180,8 +179,7 @@ class shopWindow(QtWidgets.QWidget):
         except ValueError:
             self.font.setBold(True)  # Изменяем ширину шрифта
             self.warning.setText('Ошибка данных')
-            s = self.tableWidget.item(row, column)
-            s.setFont(self.font)
+            self.tableWidget.item(row, column).setFont(self.font)
             self.tableWidget.item(row, column).setForeground(
                 QtGui.QColor(255, 0, 0))
             self.buttonForCreateTransaction.setEnabled(False)
@@ -207,8 +205,7 @@ class shopWindow(QtWidgets.QWidget):
     def updateTable(self):
         self.tableWidget.blockSignals(True)
         self.tableWidget.setRowCount(0)
-        request = self.lineEditForSearch.text()
-        res = self.db.findTableRequest(request)
+        res = self.db.findTableRequest(self.lineEditForSearch.text())
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)

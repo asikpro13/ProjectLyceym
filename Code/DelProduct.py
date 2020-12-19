@@ -25,14 +25,11 @@ class DelWindow(QDialog):  # Окно авторизации
     def delUI(self):  # Основной метод
         self.label = QLabel(self)
         self.label.setGeometry(QRect(60, 70, 181, 16))
-        self.label.setObjectName("label")
         self.ok = QPushButton(self)
         self.ok.setGeometry(QRect(50, 160, 75, 23))
-        self.ok.setObjectName("pushButton")
         self.ok.clicked.connect(self.delProduct)
         self.cancel = QPushButton(self)
         self.cancel.setGeometry(QRect(160, 160, 75, 23))
-        self.cancel.setObjectName("pushButton_2")
         self.cancel.clicked.connect(self.close)
         self.retranslateUi()
 
