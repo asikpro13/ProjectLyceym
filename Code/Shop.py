@@ -5,9 +5,8 @@ from Code.DelProduct import DelWindow
 from Code.AddProduct import addProductWindow
 from Code.LK import LK_window
 from DataBase.workFromDB import DB  # Импортируем работу с базой данных
-
-
 #  Импорт всех нужных библиотек, стилей
+
 
 class TableWidgetForTrans(QtWidgets.QTableWidget):
     def __init__(self, root):
@@ -29,7 +28,6 @@ class TableWidget(QtWidgets.QTableWidget):
     def __init__(self, root):
         self.root = root  # Создаем экземпляр родительского окна
         super(TableWidget, self).__init__(root)
-        # self.cellPressed[int, int].connect(self.columnRow)
         self.cellPressed[int, int].connect(self.root.clickedRow)
 
     def columnRow(self, r, c):
@@ -63,16 +61,16 @@ class shopWindow(QtWidgets.QWidget):
         self.login = root.login.text()
         self.column = 0
         self.r = 0
-        self.db = DB()
         self.listWarning = []
+        self.db = self.root.db
         super(shopWindow, self).__init__()
+
         self.resize(1269, 746)  # Изменяем размер окна
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
         self.setMinimumHeight(self.height())  # Изменяем минимальную высоту окна
+
         self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
         self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
-        if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
-            self.buttonForAddProduct.hide()
         self.buttonForCreateTransaction = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
         self.buttonPurchases = QtWidgets.QPushButton(self)
         self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
@@ -85,9 +83,12 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonForLK.clicked.connect(self.openLKWindow)
         self.buttonForCreateTransaction.clicked.connect(self.transaction)
         self.buttonPurchases.clicked.connect(self.buy)
+        self.tableWidget.cellChanged.connect(self.updateProduct)
+
+        if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
+            self.buttonForAddProduct.hide()
 
     def setupUi(self):  # Основной метод
-        #  Все кнопки создаются по мере работы, а не в инициализации т.к. после инициализации кнопки не хотят работать
         self.buttonForLK.resize(120, 28)  # Изменяем геометрию кнопки для ЛК
         # self.buttonForLK.clicked.connect()  # Коннект функции к кнопке
         self.buttonForAddProduct.resize(131, 28)
@@ -122,7 +123,6 @@ class shopWindow(QtWidgets.QWidget):
         self.buttonPurchases.move(self.tableWidgetForTrans.width() // 2 + self.tableWidgetForTrans.x(), 30)
         self.buttonForAddProduct.move(self.tableWidget.x(), 30)
         self.buttonForLK.move(self.tableWidget.x() + self.tableWidget.width() - self.buttonForLK.width(), 30)
-        self.tableWidget.cellChanged.connect(self.updateProduct)
         self.warning.setText('Предупреждение')
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 0)
         self.warning.hide()
@@ -148,11 +148,10 @@ class shopWindow(QtWidgets.QWidget):
 
     def showError(self, row, column):
         try:
-            if column == 6:
+            if column == 6 or column == 5:
                 count = 0
                 self.tableWidget.blockSignals(True)
-                if [row, column] not in self.listWarning:
-                    self.listWarning.append([row, column])
+                self.checkError()
                 for i in range(len(self.listWarning)):
                     if int(self.tableWidget.item(self.listWarning[i - count][0],
                                                  self.listWarning[i - count][1] - 1).text()) < int(
@@ -162,16 +161,13 @@ class shopWindow(QtWidgets.QWidget):
                                                          self.listWarning[i - count][1]).text()) < 0:
                         self.font.setBold(True)  # Изменяем ширину шрифта
                         self.warning.setText('Ошибка данных')
-                        self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).setFont(
-                            self.font)
+
                         self.tableWidget.item(self.listWarning[i - count][0],
                                               self.listWarning[i - count][1]).setForeground(QtGui.QColor(255, 0, 0))
                         self.buttonForCreateTransaction.setEnabled(False)
                         self.warning.show()
                     else:
                         self.font.setBold(False)
-                        self.tableWidget.item(self.listWarning[i - count][0], self.listWarning[i - count][1]).setFont(
-                            self.font)
                         self.tableWidget.item(self.listWarning[i - count][0],
                                               self.listWarning[i - count][1]).setForeground(QtGui.QColor(0, 0, 0))
                         if i + 1 <= len(self.listWarning):
@@ -216,6 +212,7 @@ class shopWindow(QtWidgets.QWidget):
         for i, row in enumerate(res):
             self.tableWidget.setRowCount(
                 self.tableWidget.rowCount() + 1)
+            self.tableWidget.blockSignals(True)
             for j, elem in enumerate(row):
                 s = QTableWidgetItem(str(elem))
                 self.clickedRow(i, j)
@@ -240,10 +237,9 @@ class shopWindow(QtWidgets.QWidget):
 
     def checkError(self):
         for i in range(self.tableWidget.rowCount()):
-            if self.tableWidget.item(i, 5).text() < self.tableWidget.item(i, 6).text():
-                self.listWarning.append([i, 6])
-        if len(self.listWarning) != 0:
-            self.showError(self.listWarning[0][0], self.listWarning[0][1])
+            if int(self.tableWidget.item(i, 5).text()) < int(self.tableWidget.item(i, 6).text()):
+                if [i, 6] not in self.listWarning:
+                    self.listWarning.append([i, 6])
 
     def updateProduct(self, row, column):
         self.showError(row, column)
@@ -254,7 +250,6 @@ class shopWindow(QtWidgets.QWidget):
         count = self.tableWidget.item(row, 5).text()
         required = self.tableWidget.item(row, 6).text()
         self.db.updateProduct(id_product, brand, name, price, count, required)
-        self.checkError()
 
     def transaction(self):
         spisok = []
@@ -277,10 +272,10 @@ class shopWindow(QtWidgets.QWidget):
         for i in range(self.tableWidgetForTrans.rowCount()):
             transactions = self.tableWidgetForTrans.item(i, 0).text().split(' ')
             self.db.buyProduct(transactions, self.login)
+        self.tableWidgetForTrans.setRowCount(0)
         self.updateTable()
 
-
-    def resizeEvent(self, Event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
+    def resizeEvent(self, event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
         self.tableWidget.resize(self.width() - (self.width() // 100 * 5) - 400,
                                 self.height() - (self.height() // 100 * 5) - self.tableWidget.y() + 20)
         self.tableWidget.move(self.width() // 2 - self.tableWidget.width() // 2 + 200, self.tableWidget.y())

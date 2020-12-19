@@ -6,7 +6,8 @@ from DataBase.workFromDB import DB
 class LK_window(QtWidgets.QDialog):
     def __init__(self, root):
         self.root = root
-        self.db = DB()
+        self.id = root.id  # Получаем параметр админ/не админ от родительского окна
+        self.db = self.root.db
         super(LK_window, self).__init__()
         self.login = root.login
         self.layout = QtWidgets.QVBoxLayout()
@@ -19,8 +20,13 @@ class LK_window(QtWidgets.QDialog):
         self.pressing = False
         self.setupUi()
 
+        if self.id == '0':
+            self.comboBox.hide()
+            self.pushButton.hide()
+
+        self.pushButton.clicked.connect(self.setAdmin)
+
     def setupUi(self):
-        self.setObjectName("Form")
         stats = self.db.getStats(self.login)
         self.setEnabled(True)
         if self.root.id == "0":
@@ -90,13 +96,10 @@ class LK_window(QtWidgets.QDialog):
         self.comboBox.setGeometry(QtCore.QRect(20, 410, 140, 28))
         self.pushButton = QtWidgets.QPushButton(self)
         self.pushButton.setGeometry(QtCore.QRect(270, 410, 160, 28))
-        self.pushButton.clicked.connect(self.setAdmin)
         self.retranslateUi()
-        QtCore.QMetaObject.connectSlotsByName(self)
 
     def setAdmin(self):
         self.db.setAdmin(self.comboBox.currentText())
-
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
