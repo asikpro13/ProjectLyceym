@@ -36,11 +36,11 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
         self.lineEditForLogin = QLineEdit(self)  # Создаем поле ввода для логина
         self.lineEditForPassword = QLineEdit(self)  # Создаем поле ввода для пароля
         self.buttonForRegistr = QPushButton(self)  # Создаем кнопку для регистрации
-        self.setupUi()  # Вызываем метод с основной работой
+        self.registration()  # Вызываем метод с основной работой
 
         self.buttonForRegistr.clicked.connect(self.reg)  # Коннектим функцию с нажатием кнопки
 
-    def setupUi(self):
+    def registration(self):
         self.setFixedSize(400, 439)  # Изменяем размер окна при появлении
 
         self.id.setText('0')
