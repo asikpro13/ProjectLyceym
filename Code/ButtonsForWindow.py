@@ -4,7 +4,7 @@ from Code.config import buttonWindowClose as bWC
 from Code.config import buttonWindowHide as bWH
 
 
-class MyBar(QWidget):
+class MyBar(QWidget):  # Титульное окно
 
     def __init__(self, parent):
         super(MyBar, self).__init__()
@@ -22,7 +22,7 @@ class MyBar(QWidget):
         self.btn_close.clicked.connect(self.btn_close_clicked)
         self.btn_min.clicked.connect(self.btn_min_clicked)
 
-    def button(self):
+    def button(self):  # Основной метод
         self.layout.setContentsMargins(0, 0, 0, 0)
 
         btn_size = 35
@@ -35,6 +35,7 @@ class MyBar(QWidget):
 
         self.title.setFixedHeight(35)
         self.title.setAlignment(Qt.AlignCenter)
+
         self.layout.addWidget(self.title)
         self.layout.addWidget(self.btn_min)
         self.layout.addWidget(self.btn_close)
@@ -63,8 +64,8 @@ class MyBar(QWidget):
     def mouseReleaseEvent(self, event):
         self.pressing = False
 
-    def btn_close_clicked(self):
+    def btn_close_clicked(self):  # Закрытие окна
         self.parent.close()
 
-    def btn_min_clicked(self):
+    def btn_min_clicked(self):  # Скрытие окна
         self.parent.showMinimized()
