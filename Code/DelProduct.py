@@ -33,7 +33,7 @@ class DelWindow(QDialog):  # Окно авторизации
     def delUI(self):  # Основной метод
 
         self.delProduct.setGeometry(QRect(60, 70, 181, 16))
-        self.delProduct.setText(_translate("Form", "Вы точно хотите удалить товар?"))
+        self.delProduct.setText("Вы точно хотите удалить товар?")
 
         self.ok.setGeometry(QRect(50, 160, 75, 23))
         self.ok.setText('Да')

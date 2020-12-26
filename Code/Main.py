@@ -17,6 +17,8 @@ from DataBase.workFromDB import DB
 
 class Main_Auth(QWidget):  # Главное окно с которого начинается работа приложения,
     def __init__(self):  # Инициализация
+        self.AuthWind = 0
+        self.RegistrWind = 0
         super(Main_Auth, self).__init__()  # Наследование от окна и его инициализация
 
         self.layout = QVBoxLayout()  # Создание лэйаута
