@@ -269,6 +269,7 @@ class shopWindow(QtWidgets.QWidget):
         for i in range(self.tableWidgetForTrans.rowCount()):
             transactions = self.tableWidgetForTrans.item(i, 0).text().split(' ')
             self.db.buyProduct(transactions, self.login)
+        self.db.resetProductRequired()
         self.tableWidgetForTrans.setRowCount(0)
         self.updateTable()
 

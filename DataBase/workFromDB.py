@@ -115,6 +115,9 @@ class DB:  # Класс для работы с базой данных
                                   'and product_required != 0').fetchall()
         return result
 
+    def resetProductRequired(self):
+        self.cur.execute('update product set product_required = 0')
+
     def setAdmin(self, login):  # Назначить администратора
         self.cur.execute('update Auth set admin = 1 where login = ?', (login,))
         self.commitConnection()
