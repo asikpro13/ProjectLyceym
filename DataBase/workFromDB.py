@@ -19,15 +19,20 @@ class DB:  # Класс для работы с базой данных
         self.savePhoto(path)
         if len(brand) == 0:
             brand = 'None'
+        if len(model) == 0:
+            model = 'None'
         name = '../Image/DBImage/' + path[path.rfind('/') + 1:]
         self.cur.execute('INSERT INTO product (product_photo, product_brand, product_name, product_price,'
                          ' product_count, product_required) VALUES (?, ?, ?, ?, ?, ?)',
                          (name, brand, model, price, count, 0,))
         if brand == 'None':
             product_id = self.cur.execute('select product_id from product where product_brand = ?', (brand, )).fetchone()
-            print(product_id)
-            self.cur.execute('update product set product_brand = ?, product_name = ? where product_id = ?',
-                             (product_id[0], product_id[0], product_id[0]))
+            self.cur.execute('update product set product_brand = ? where product_id = ?',
+                             (product_id[0], product_id[0]))
+        if model == 'None':
+            product_id = self.cur.execute('select product_id from product where product_name = ?', (model,)).fetchone()
+            self.cur.execute('update product set product_name = ? where product_id = ?',
+                             (product_id[0], product_id[0]))
         self.commitConnection()
         # Проводим запрос
 
