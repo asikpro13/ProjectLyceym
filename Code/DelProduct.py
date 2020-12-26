@@ -18,32 +18,33 @@ class DelWindow(QDialog):  # Окно авторизации
         self.setMinimumSize(288, 258)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
+
+        self.delProduct = QLabel(self)
+        self.ok = QPushButton(self)
+        self.cancel = QPushButton(self)
+
         self.delUI()
+
+        self.ok.clicked.connect(self.delProduct)
+        self.cancel.clicked.connect(self.close)
         #  Создаем объект дочернего окна, создаем кастомные титульные кнопки, создаем надписи, поля для ввода
         #  Изменяем размер окна и вызываем основной метод
 
     def delUI(self):  # Основной метод
-        self.label = QLabel(self)
-        self.label.setGeometry(QRect(60, 70, 181, 16))
-        self.ok = QPushButton(self)
+
+        self.delProduct.setGeometry(QRect(60, 70, 181, 16))
+        self.delProduct.setText(_translate("Form", "Вы точно хотите удалить товар?"))
+
         self.ok.setGeometry(QRect(50, 160, 75, 23))
-        self.ok.clicked.connect(self.delProduct)
-        self.cancel = QPushButton(self)
+        self.ok.setText('Да')
+
         self.cancel.setGeometry(QRect(160, 160, 75, 23))
-        self.cancel.clicked.connect(self.close)
-        self.retranslateUi()
+        self.cancel.setText('Нет')
 
     def delProduct(self):
         self.db.delProduct(self.root.tableWidget.item(self.root.r, 0).text())
         self.close()
 
-    def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
+    def closeEvent(self, event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
         self.root.updateTable()
-
-    def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
-        _translate = QCoreApplication.translate
-        self.label.setText(_translate("Form", "Вы точно хотите удалить товар?"))
-        self.ok.setText('Да')
-        self.cancel.setText('Нет')
-    #  Изменяем текст в объетках по смыслу
