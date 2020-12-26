@@ -8,13 +8,13 @@ from DataBase.workFromDB import DB  # Импортируем работу с б�
 #  Импорт всех нужных библиотек, стилей
 
 
-class TableWidgetForTrans(QtWidgets.QTableWidget):
+class TableWidgetForTrans(QtWidgets.QTableWidget):  # Таблица для транзакций
     def __init__(self, root):
         self.root = root
         super(TableWidgetForTrans, self).__init__(root)
         self.cellPressed[int, int].connect(self.root.clickedRow)
 
-    def mouseDoubleClickEvent(self, event):
+    def mouseDoubleClickEvent(self, event):  # Вызов окна удаления транзакции
         super(TableWidgetForTrans, self).mousePressEvent(event)
         if event.button() == QtCore.Qt.LeftButton:
             try:
@@ -24,13 +24,14 @@ class TableWidgetForTrans(QtWidgets.QTableWidget):
                 pass
 
 
-class TableWidget(QtWidgets.QTableWidget):
-    def __init__(self, root):
+class TableWidget(QtWidgets.QTableWidget):  # Основная таблица с продуктами
+    def __init__(self, root):  # Инициализация таблицы
         self.root = root  # Создаем экземпляр родительского окна
+        self.fname = 0
         super(TableWidget, self).__init__(root)
         self.cellPressed[int, int].connect(self.root.clickedRow)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # RB - открытие окна удаления товара, LB - смена фотографии(если нажать на 2 ст.)
         super(TableWidget, self).mousePressEvent(event)
         if self.root.id == '1':
             if event.button() == QtCore.Qt.RightButton:
@@ -51,13 +52,17 @@ class TableWidget(QtWidgets.QTableWidget):
                     pass
 
 
-class shopWindow(QtWidgets.QWidget):
+class shopWindow(QtWidgets.QWidget):  # Окно магазина
     def __init__(self, root):
         self.root = root  # Создаем экземпляр родительского окна
         self.id = root.id.text()  # Получаем параметр админ/не админ от родительского окна
         self.login = root.login.text()
         self.column = 0
         self.r = 0
+        self.c = 0
+        self.LK = 0
+        self.addWind = 0
+        self.delWind = 0
         self.listWarning = []
         self.db = self.root.db
         super(shopWindow, self).__init__()
@@ -65,17 +70,6 @@ class shopWindow(QtWidgets.QWidget):
         self.resize(1269, 746)  # Изменяем размер окна
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
         self.setMinimumHeight(self.height())  # Изменяем минимальную высоту окна
-
-        self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
-        self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
-        self.buttonForCreateTransaction = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
-        self.buttonPurchases = QtWidgets.QPushButton(self)
-        self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
-        self.tableWidget = TableWidget(self)  # Создаем таблицу
-        self.tableWidgetForTrans = TableWidgetForTrans(self)
-        self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
-        self.warning = QtWidgets.QLabel(self)
-        self.font = QtGui.QFont()  # Создаем объект шрифта
 
         self.buttonForLK.clicked.connect(self.openLKWindow)
         self.buttonForCreateTransaction.clicked.connect(self.transaction)
@@ -90,6 +84,16 @@ class shopWindow(QtWidgets.QWidget):
             self.buttonForAddProduct.hide()
 
         self.setWindowTitle("Касса")
+        self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
+        self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
+        self.buttonForCreateTransaction = QtWidgets.QPushButton(self)  # Создаем кнопку для выписки чек
+        self.buttonPurchases = QtWidgets.QPushButton(self)
+        self.lineEditForSearch = QtWidgets.QLineEdit(self)  # Создаем поле для поиска
+        self.tableWidget = TableWidget(self)  # Создаем таблицу
+        self.tableWidgetForTrans = TableWidgetForTrans(self)
+        self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
+        self.warning = QtWidgets.QLabel(self)
+        self.font = QtGui.QFont()  # Создаем объект шрифта
 
     def setupUi(self):  # Основной метод
         self.buttonForLK.resize(120, 28)  # Изменяем геометрию кнопки для ЛК
@@ -133,7 +137,7 @@ class shopWindow(QtWidgets.QWidget):
         self.updateTable()  # Запускаем функцию обновления таблицы
         self.checkError()
 
-    def checkCount(self, row, column):
+    def checkCount(self, row, column):  # Проверка количества товара на доступность(возможно ли купить)
         if column >= 6:
             try:
                 if int(self.tableWidget.item(row, column - 1).text()) < int(self.tableWidget.item(row, column).text()) \
@@ -146,7 +150,7 @@ class shopWindow(QtWidgets.QWidget):
             except AttributeError:
                 pass
 
-    def showError(self, row, column):
+    def showError(self, row, column):  # Отражение ошибок
         try:
             if column == 6 or column == 5:
                 count = 0
@@ -186,23 +190,23 @@ class shopWindow(QtWidgets.QWidget):
             self.warning.show()
             self.tableWidget.blockSignals(False)
 
-    def openLKWindow(self):
+    def openLKWindow(self):  # Открытие окна личноо кабинета
         self.LK = LK_window(self)
         self.LK.show()
 
-    def openAddProductWindow(self):
+    def openAddProductWindow(self):  # Открытие окна добавления продукта
         self.addWind = addProductWindow(self)
         self.addWind.show()
 
-    def openDelProductWindow(self):
+    def openDelProductWindow(self):  # Открытие окна удаления продукта
         self.delWind = DelWindow(self)  # создаем объект для работы с окном из другого файла и инициализируем его
         self.delWind.show()
 
-    def clickedRow(self, r, c):
+    def clickedRow(self, r, c):  # Обновление строчки/таблицы по которой кликнули
         self.r = r
         self.c = c
 
-    def updateTable(self):
+    def updateTable(self):  # Обновление таблицы
         self.tableWidget.blockSignals(True)
         self.tableWidget.setRowCount(0)
         res = self.db.findTableRequest(self.lineEditForSearch.text())
@@ -232,13 +236,13 @@ class shopWindow(QtWidgets.QWidget):
         self.tableWidget.blockSignals(False)
         self.checkError()
 
-    def checkError(self):
+    def checkError(self):  # Поиск ошибок
         for i in range(self.tableWidget.rowCount()):
             if int(self.tableWidget.item(i, 5).text()) < int(self.tableWidget.item(i, 6).text()) \
                     and [i, 6] not in self.listWarning:
                 self.listWarning.append([i, 6])
 
-    def updateProduct(self, row, column):
+    def updateProduct(self, row, column):  # Обновление продукта
         self.showError(row, column)
         id_product = self.tableWidget.item(row, 0).text()
         brand = self.tableWidget.item(row, 2).text()
@@ -248,7 +252,7 @@ class shopWindow(QtWidgets.QWidget):
         required = self.tableWidget.item(row, 6).text()
         self.db.updateProduct(id_product, brand, name, price, count, required)
 
-    def transaction(self):
+    def transaction(self):  # Проведение транзакции
         spisok = []
         self.tableWidgetForTrans.setRowCount(0)
         result = self.db.getTransactions()
@@ -265,7 +269,7 @@ class shopWindow(QtWidgets.QWidget):
                     s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidgetForTrans.setItem(i, j, s)
 
-    def buy(self):
+    def buy(self):  # Покупка товаров
         for i in range(self.tableWidgetForTrans.rowCount()):
             transactions = self.tableWidgetForTrans.item(i, 0).text().split(' ')
             self.db.buyProduct(transactions, self.login)
