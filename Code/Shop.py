@@ -71,18 +71,6 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.setMinimumWidth(self.width())  # Изменяем минимальную ширину окна
         self.setMinimumHeight(self.height())  # Изменяем минимальную высоту окна
 
-        self.buttonForLK.clicked.connect(self.openLKWindow)
-        self.buttonForCreateTransaction.clicked.connect(self.transaction)
-        self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
-        self.buttonPurchases.clicked.connect(self.buy)
-        self.tableWidget.cellChanged.connect(self.updateProduct)
-        self.lineEditForSearch.textChanged.connect(self.updateTable)
-
-        self.setupUi()  # Вызов метода с основной работой
-
-        if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
-            self.buttonForAddProduct.hide()
-
         self.setWindowTitle("Касса")
         self.buttonForLK = QtWidgets.QPushButton(self)  # Создаем кнопку для личного кабинета
         self.buttonForAddProduct = QtWidgets.QPushButton(self)  # Создаем кнопку для добавления продукта(only admin)
@@ -94,6 +82,18 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
         self.warning = QtWidgets.QLabel(self)
         self.font = QtGui.QFont()  # Создаем объект шрифта
+
+        self.setupUi()  # Вызов метода с основной работой
+
+        if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
+            self.buttonForAddProduct.hide()
+
+        self.buttonForLK.clicked.connect(self.openLKWindow)
+        self.buttonForCreateTransaction.clicked.connect(self.transaction)
+        self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
+        self.buttonPurchases.clicked.connect(self.buy)
+        self.tableWidget.cellChanged.connect(self.updateProduct)
+        self.lineEditForSearch.textChanged.connect(self.updateTable)
 
     def setupUi(self):  # Основной метод
         self.buttonForLK.resize(120, 28)  # Изменяем геометрию кнопки для ЛК

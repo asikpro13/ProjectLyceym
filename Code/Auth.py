@@ -12,6 +12,7 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.root = root
         self.root.setEnabled(False)
         self.db = self.root.db
+        self.Wind = 0
         self.font = self.root.font
         #  Наследуем все необходимые объекты
         super(AuthWindow, self).__init__()
@@ -29,13 +30,18 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.labelAuth = QLabel(self)  # Создаем надпись авторизации
         self.labelWarAuth = QLabel(self)  # Создаем надпись с предупреждением
         self.labelPassword = QLabel(self)  # Создаем надпись пароля
-        self.lineEditForLogin = QLineEdit(self)  # Создаем поле ввода для логина
-        self.lineEditForPassword = QLineEdit(self)  # Создаем поле ввода для пароля
+        self.lineEditForLoginAuth = QLineEdit(self)  # Создаем поле ввода для логина
+        self.lineEditForPasswordAuth = QLineEdit(self)  # Создаем поле ввода для пароля
         self.buttonForAuth = QPushButton(self)  # Создаем кнопку для авторизации
 
         self.id = QLabel(self)
         self.login = QLabel(self)
         self.Auth()
+
+        self.setWindowTitle("Авторизация")
+        self.labelAuth.setText("Авторизация")
+        self.labelLogin.setText("Логин")
+        self.labelPassword.setText("Пароль")
 
     def Auth(self):  # Основной метод
         self.setWindowTitle('Авторизация')
@@ -48,24 +54,23 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.labelPassword.setFont(self.font)
         self.labelPassword.setGeometry(QRect(self.width() // 2 - self.labelPassword.width() // 2 - 5, 250, 151, 61))
         self.labelLogin.setFont(self.font)
-        self.lineEditForLogin.setGeometry(QRect(60, 210, 270, 30))
-        self.lineEditForLogin.returnPressed.connect(self.check)
-        self.lineEditForPassword.setGeometry(QRect(60, 320, 271, 30))
-        self.lineEditForPassword.setEchoMode(QLineEdit.Password)
-        self.lineEditForPassword.returnPressed.connect(self.check)
+        self.lineEditForLoginAuth.setGeometry(QRect(60, 210, 270, 30))
+        self.lineEditForLoginAuth.returnPressed.connect(self.check)
         self.buttonForAuth.clicked.connect(self.check)
         self.buttonForAuth.setText('Авторизироваться')
+        self.lineEditForPasswordAuth.setGeometry(QRect(60, 320, 271, 30))
+        self.lineEditForPasswordAuth.returnPressed.connect(self.check)
+        self.lineEditForPasswordAuth.setEchoMode(QLineEdit.Password)
         self.buttonForAuth.resize(130, 30)
         self.buttonForAuth.move(self.width() // 2 - self.buttonForAuth.width() // 2, 370)
-        self.retranslateUi()
         # В основном методе изменемяем название окна, создаем надписи, меняем шрифт
 
     def check(self):  # Функция проверки
-        result = self.db.auth(self.lineEditForLogin.text(), self.lineEditForPassword.text())
+        result = self.db.auth(self.lineEditForLoginAuth.text(), self.lineEditForPasswordAuth.text())
         if len(result) > 0:
             self.root.close()
             self.id.setText(str(result[0][3]))
-            self.login.setText(str(self.lineEditForLogin.text()))
+            self.login.setText(str(self.lineEditForLoginAuth.text()))
             self.shopWind()
             self.close()
             # Пропускаем
@@ -83,13 +88,5 @@ class AuthWindow(QDialog):  # Окно авторизации
         self.Wind = shopWindow(self)
         self.Wind.show()
 
-    def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
+    def closeEvent(self, event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
-
-    def retranslateUi(self):  # Специальная функция от qt для переименовывания названий объектов
-        _translate = QCoreApplication.translate
-        self.setWindowTitle(_translate("", "Авторизация"))
-        self.labelAuth.setText(_translate("", "Авторизация"))
-        self.labelLogin.setText(_translate("", "Логин"))
-        self.labelPassword.setText(_translate("", "Пароль"))
-    #  Изменяем текст в объетках по смыслу
