@@ -83,7 +83,7 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.warning = QtWidgets.QLabel(self)
         self.font = QtGui.QFont()  # Создаем объект шрифта
 
-        self.setupUi()  # Вызов метода с основной работой
+        self.shop()  # Вызов метода с основной работой
 
         if self.id == '0':  # Если пользователь не админ то скрываем от него кнопки добавления и удаления продукта
             self.buttonForAddProduct.hide()
@@ -95,7 +95,7 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.tableWidget.cellChanged.connect(self.updateProduct)
         self.lineEditForSearch.textChanged.connect(self.updateTable)
 
-    def setupUi(self):  # Основной метод
+    def shop(self):  # Основной метод
         self.buttonForLK.resize(120, 28)  # Изменяем геометрию кнопки для ЛК
         self.buttonForLK.setText("Личный кабинет")
         self.buttonForAddProduct.resize(131, 28)
