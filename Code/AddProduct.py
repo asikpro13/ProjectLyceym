@@ -10,84 +10,83 @@ class addProductWindow(QtWidgets.QDialog):
         self.db = self.root.db
         super(addProductWindow, self).__init__()
 
-        self.pushButton = QtWidgets.QPushButton(self)
-
+        self.warning = QtWidgets.QLabel(self)
+        self.fname = 0
+        self.pixmap = 0
+        self.addProductButton = QtWidgets.QPushButton(self)
+        self.spinBoxCount = QtWidgets.QSpinBox(self)
+        self.spinBoxPrice = QtWidgets.QSpinBox(self)
+        self.addPhotoButton = QtWidgets.QPushButton(self)
+        self.labelPhoto = QtWidgets.QLabel(self)
+        self.labelBrand = QtWidgets.QLabel(self)
+        self.lineEditBrand = QtWidgets.QLineEdit(self)
+        self.lineEditModel = QtWidgets.QLineEdit(self)
+        self.labelModel = QtWidgets.QLabel(self)
+        self.labelPrice = QtWidgets.QLabel(self)
+        self.labelCount = QtWidgets.QLabel(self)
+        self.labelAddProduct = QtWidgets.QLabel(self)
         self.setupUi()
+
+        self.setWindowTitle("Добавление продукта")
+        self.addProductButton.setText("Создать")
+        self.labelBrand.setText("Бренд")
+        self.labelModel.setText("Модель")
+        self.labelPrice.setText("Цена")
+        self.labelCount.setText("Количество")
+        self.labelAddProduct.setText("Создание товара")
+        self.addPhotoButton.setText("добавить фото")
 
     def setupUi(self):
         self.resize(380, 499)
-        self.pushButton.setGeometry(QtCore.QRect(130, 450, 93, 28))
-        self.pushButton.clicked.connect(self.createProduct)
-        self.warning = QtWidgets.QLabel(self)
+        self.addProductButton.setGeometry(QtCore.QRect(130, 450, 93, 28))
+        self.addProductButton.clicked.connect(self.createProduct)
         self.warning.setText('Ошибка')
         self.warning.hide()
         self.warning.move(self.width() // 2 - self.warning.width() // 2, 5)
-        self.label = QtWidgets.QLabel(self)
-        self.label.setGeometry(QtCore.QRect(70, 280, 55, 16))
-        self.lineEdit = QtWidgets.QLineEdit(self)
-        self.lineEdit.setGeometry(QtCore.QRect(150, 280, 141, 22))
-        self.lineEdit_2 = QtWidgets.QLineEdit(self)
-        self.lineEdit_2.setGeometry(QtCore.QRect(150, 320, 140, 22))
-        self.label_2 = QtWidgets.QLabel(self)
-        self.label_2.setGeometry(QtCore.QRect(70, 320, 50, 20))
-        self.label_3 = QtWidgets.QLabel(self)
-        self.label_3.setGeometry(QtCore.QRect(70, 360, 55, 16))
-        self.label_4 = QtWidgets.QLabel(self)
-        self.label_4.setGeometry(QtCore.QRect(70, 400, 80, 16))
-        self.label_5 = QtWidgets.QLabel(self)
-        self.label_5.setGeometry(QtCore.QRect(80, 0, 241, 60))
+        self.labelBrand.setGeometry(QtCore.QRect(70, 280, 55, 16))
+        self.lineEditBrand.setGeometry(QtCore.QRect(150, 280, 141, 22))
+        self.lineEditModel.setGeometry(QtCore.QRect(150, 320, 140, 22))
+        self.labelModel.setGeometry(QtCore.QRect(70, 320, 50, 20))
+        self.labelPrice.setGeometry(QtCore.QRect(70, 360, 55, 16))
+        self.labelCount.setGeometry(QtCore.QRect(70, 400, 80, 16))
+        self.labelAddProduct.setGeometry(QtCore.QRect(80, 0, 241, 60))
         font = QtGui.QFont()
         font.setPointSize(17)
-        self.label_5.setFont(font)
-        self.pushButton_2 = QtWidgets.QPushButton(self)
-        self.pushButton_2.setGeometry(QtCore.QRect(190, 100, 150, 150))
-        self.pushButton_2.setStyleSheet("QPushButton{\n"
-                                        "border-style: solid;\n"
-                                        "border-width: 1px;\n"
-                                        "border-radius: 75%;\n"
-                                        "border-color: red;}\n"
-                                        "QPushButton:pressed{\n"
-                                        "background-color: rgb(200, 200, 200);}")
-        self.pushButton_2.clicked.connect(self.addPhoto)
-        self.spinBox = QtWidgets.QSpinBox(self)
-        self.spinBox.setGeometry(QtCore.QRect(150, 400, 141, 22))
-        self.spinBox.setMinimum(1)
-        self.spinBox.setMaximum(1000000000)
-        self.spinBox_2 = QtWidgets.QSpinBox(self)
-        self.spinBox_2.setGeometry(QtCore.QRect(150, 360, 141, 22))
-        self.spinBox_2.setMaximum(1000000000)
-        self.label_6 = QtWidgets.QLabel(self)
-        self.retranslateUi()
-        QtCore.QMetaObject.connectSlotsByName(self)
+        self.labelAddProduct.setFont(font)
+        self.addPhotoButton.setGeometry(QtCore.QRect(190, 100, 150, 150))
+        self.addPhotoButton.setStyleSheet("QPushButton{\n"
+                                          "border-style: solid;\n"
+                                          "border-width: 1px;\n"
+                                          "border-radius: 75%;\n"
+                                          "border-color: red;}\n"
+                                          "QPushButton:pressed{\n"
+                                          "background-color: rgb(200, 200, 200);}")
+        self.addPhotoButton.clicked.connect(self.addPhoto)
+        self.spinBoxCount.setGeometry(QtCore.QRect(150, 400, 141, 22))
+        self.spinBoxCount.setMinimum(1)
+        self.spinBoxCount.setMaximum(1000000000)
+        self.spinBoxPrice.setGeometry(QtCore.QRect(150, 360, 141, 22))
+        self.spinBoxPrice.setMaximum(1000000000)
 
-    def addPhoto(self):
-        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара', filter='Файлы изображений (*.png *.jpg *.bmp)')
-        self.label_6.move(20, 70)
+    def addPhoto(self):  # Добавление фото
+        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть изображение товара',
+                                                              filter='Файлы изображений (*.png *.jpg *.bmp)')
+        self.labelPhoto.move(20, 70)
         self.pixmap = QtGui.QPixmap(self.fname)
         self.pixmap = self.pixmap.scaled(QtCore.QSize(150, 200))
-        self.label_6.resize(150, 200)
-        self.label_6.setPixmap(self.pixmap)
+        self.labelPhoto.resize(150, 200)
+        self.labelPhoto.setPixmap(self.pixmap)
 
-    def createProduct(self):
+    def createProduct(self):  # Создание продукта(если продукт не создается то отображается предупреждение)
         try:
-            self.db.addProduct(self.fname, self.lineEdit.text(), self.lineEdit_2.text(), self.spinBox_2.text(), self.spinBox.text())
+            self.db.addProduct(self.fname, self.lineEditBrand.text(), self.lineEditModel.text(),
+                               self.spinBoxPrice.text(), self.spinBoxCount.text())
             self.close()
         except FileNotFoundError:
             self.warning.show()
         except AttributeError:
             self.warning.show()
 
-    def closeEvent(self, Event):  # Макрос от pyqt срабатывающий при закрытии окна
+    def closeEvent(self, event):  # Макрос от pyqt срабатывающий при закрытии окна
         self.root.setEnabled(True)  # Говорим окну продолжить работу
         self.root.updateTable()
-
-    def retranslateUi(self):
-        _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Form", "Добавление продукта"))
-        self.pushButton.setText(_translate("Form", "Создать"))
-        self.label.setText(_translate("Form", "Бренд"))
-        self.label_2.setText(_translate("Form", "Модель"))
-        self.label_3.setText(_translate("Form", "Цена"))
-        self.label_4.setText(_translate("Form", "Количество"))
-        self.label_5.setText(_translate("Form", "Создание товара"))
-        self.pushButton_2.setText(_translate("Form", "добавить фото"))
