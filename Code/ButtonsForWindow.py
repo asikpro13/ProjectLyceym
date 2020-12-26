@@ -9,22 +9,27 @@ class MyBar(QWidget):
     def __init__(self, parent):
         super(MyBar, self).__init__()
         self.parent = parent
-        self.setupUI()
-
-    def setupUI(self):
         self.layout = QHBoxLayout()
+        self.title = QLabel()
+        self.btn_close = QPushButton("x")
+        self.btn_min = QPushButton("-")
+        self.pressing = False
+        self.start = QPoint(0, 0)
+        self.end = 0
+        self.movement = 0
+        self.button()
+
+        self.btn_close.clicked.connect(self.btn_close_clicked)
+        self.btn_min.clicked.connect(self.btn_min_clicked)
+
+    def button(self):
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.title = QLabel("")
 
         btn_size = 35
 
-        self.btn_close = QPushButton("x")
-        self.btn_close.clicked.connect(self.btn_close_clicked)
         self.btn_close.setFixedSize(btn_size, btn_size)
         self.btn_close.setStyleSheet(bWC)
 
-        self.btn_min = QPushButton("-")
-        self.btn_min.clicked.connect(self.btn_min_clicked)
         self.btn_min.setFixedSize(btn_size, btn_size)
         self.btn_min.setStyleSheet(bWH)
 
@@ -38,11 +43,8 @@ class MyBar(QWidget):
             color: white;""")
         self.setLayout(self.layout)
 
-        self.start = QPoint(0, 0)
-        self.pressing = False
-
-    def resizeEvent(self, QResizeEvent):
-        super(MyBar, self).resizeEvent(QResizeEvent)
+    def resizeEvent(self, event):
+        super(MyBar, self).resizeEvent(event)
 
     def mousePressEvent(self, event):
         self.start = self.mapToGlobal(event.pos())
@@ -51,14 +53,14 @@ class MyBar(QWidget):
     def mouseMoveEvent(self, event):
         if self.pressing:
             self.end = self.mapToGlobal(event.pos())
-            self.movement = self.end-self.start
+            self.movement = self.end - self.start
             self.parent.setGeometry(self.mapToGlobal(self.movement).x(),
-                                self.mapToGlobal(self.movement).y(),
-                                self.parent.width(),
-                                self.parent.height())
+                                    self.mapToGlobal(self.movement).y(),
+                                    self.parent.width(),
+                                    self.parent.height())
             self.start = self.end
 
-    def mouseReleaseEvent(self, QMouseEvent):
+    def mouseReleaseEvent(self, event):
         self.pressing = False
 
     def btn_close_clicked(self):
