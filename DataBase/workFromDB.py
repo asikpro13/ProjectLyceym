@@ -26,7 +26,8 @@ class DB:  # Класс для работы с базой данных
                          ' product_count, product_required) VALUES (?, ?, ?, ?, ?, ?)',
                          (name, brand, model, price, count, 0,))
         if brand == 'None':
-            product_id = self.cur.execute('select product_id from product where product_brand = ?', (brand, )).fetchone()
+            product_id = self.cur.execute('select product_id from product where product_brand = ?',
+                                          (brand, )).fetchone()
             self.cur.execute('update product set product_brand = ? where product_id = ?',
                              (product_id[0], product_id[0]))
         if model == 'None':
