@@ -19,7 +19,7 @@ class DelWindow(QDialog):  # Окно авторизации
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
 
-        self.delProduct = QLabel(self)
+        self.delProductText = QLabel(self)
         self.ok = QPushButton(self)
         self.cancel = QPushButton(self)
 
@@ -32,8 +32,8 @@ class DelWindow(QDialog):  # Окно авторизации
 
     def delUI(self):  # Основной метод
 
-        self.delProduct.setGeometry(QRect(60, 70, 181, 16))
-        self.delProduct.setText("Вы точно хотите удалить товар?")
+        self.delProductText.setGeometry(QRect(60, 70, 181, 16))
+        self.delProductText.setText("Вы точно хотите удалить товар?")
 
         self.ok.setGeometry(QRect(50, 160, 75, 23))
         self.ok.setText('Да')
