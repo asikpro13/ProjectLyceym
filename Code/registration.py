@@ -13,6 +13,7 @@ class RegistrationWindow(QDialog):  # Окно для регистрации
     def __init__(self, root):  # Инициализация
         self.root = root  # Создаем экземпляр родительского окна
         self.font = root.font
+        self.Wind = 0
         self.root.setEnabled(False)
         self.db = self.root.db
         super(RegistrationWindow, self).__init__()

@@ -31,9 +31,9 @@ class LK_window(QtWidgets.QDialog):
         self.comboBox = QtWidgets.QComboBox(self)
         self.pushButton = QtWidgets.QPushButton(self)
         if self.root.id == "0":  # Фото в лк зависит от должности
-            self.pix = QtGui.QPixmap('../Image/account_group_team_user_icon_127141 (1).png').scaled(150, 150)
+            self.pix = QtGui.QPixmap('../Image/imageForUser.png').scaled(150, 150)
         else:
-            self.pix = QtGui.QPixmap('../Image/date.png').scaled(150, 150)
+            self.pix = QtGui.QPixmap('../Image/imageForAdmin.png').scaled(150, 150)
         # Создаем все объекты
         self.setupUi()
 
