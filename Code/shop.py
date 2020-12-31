@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
-from Code.DelProduct import DelWindow
-from Code.AddProduct import addProductWindow
-from Code.LK import LK_window
+from Code.delProduct import DelWindow
+from Code.addProduct import addProductWindow
+from Code.lK import LK_window
 from DataBase.workFromDB import DB  # Импортируем работу с базой данных
 #  Импорт всех нужных библиотек, стилей
 

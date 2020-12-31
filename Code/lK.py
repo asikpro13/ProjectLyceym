@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Code.ButtonsForWindow import MyBar
+from Code.buttonsForWindow import MyBar
 from DataBase.workFromDB import DB
 
 

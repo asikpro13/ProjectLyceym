@@ -3,9 +3,9 @@ from PyQt5.QtCore import QRect, Qt, QCoreApplication, QMetaObject
 from PyQt5.QtGui import QFont, QPixmap  # Импортируем специальные библиотеки
 from PyQt5.QtWidgets import QPushButton, QWidget, QVBoxLayout, QLabel, QApplication  # ->
 # Импортируем специальные библиотеки
-from Code.Auth import AuthWindow  # Импортируем окно с авторизацией
-from Code.Registration import RegistrationWindow  # Импортируем окно с регистрацией
-from Code.ButtonsForWindow import MyBar  # Импортируем титульные кнопки
+from Code.auth import AuthWindow  # Импортируем окно с авторизацией
+from Code.registration import RegistrationWindow  # Импортируем окно с регистрацией
+from Code.buttonsForWindow import MyBar  # Импортируем титульные кнопки
 from Code.config import backgroundMain as bM  #
 from Code.config import buttonAuth as bA
 from Code.config import buttonRegistration as bR

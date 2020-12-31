@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtWidgets import QDialog, QLabel, QFrame, QLineEdit, QPushButton, QVBoxLayout
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
-from Code.Shop import shopWindow
-from Code.ButtonsForWindow import MyBar
+from Code.shop import shopWindow
+from Code.buttonsForWindow import MyBar
 from DataBase.workFromDB import DB
 from PyQt5.QtGui import QFont
 

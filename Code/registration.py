@@ -2,9 +2,9 @@
 from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QFrame, QDialog, QVBoxLayout
 from PyQt5.QtCore import Qt, QRect, QMetaObject, QCoreApplication
 from PyQt5.QtGui import QFont
-from Code.Shop import shopWindow
+from Code.shop import shopWindow
 # Импортируем специальные библиотеки
-from Code.ButtonsForWindow import MyBar
+from Code.buttonsForWindow import MyBar
 from DataBase.workFromDB import DB
 # Импортируем настройки стилей
 
