@@ -55,7 +55,7 @@ class DB:  # Класс для работы с базой данных
 
     def buyProduct(self, transactions, login):
         self.cur.execute('update product set product_count = product_count - ? where product_brand = ? and '
-                         'product_name = ?', (int(transactions[4]), int(transactions[0]), transactions[1],))
+                         'product_name = ?', (int(transactions[4]), transactions[0], transactions[1],))
         self.cur.execute('update Auth set purchases = purchases + 1, money = money + ?,'
                          ' counterProducts = counterProducts + ? where login = ?',
                          (float(transactions[7]), int(transactions[4]), login,))
