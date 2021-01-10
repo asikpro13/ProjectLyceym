@@ -19,6 +19,7 @@ from Code.addProduct import addProductWindow
 from Code.lK import LK_window
 from Code.shop import shopWindow
 
+
 class Main_Auth(QWidget):  # Главное окно с которого начинается работа приложения,
     def __init__(self):  # Инициализация
         self.AuthWind = 0
