@@ -5,6 +5,8 @@ from Code.delProduct import DelWindow
 from Code.addProduct import addProductWindow
 from Code.lK import LK_window
 from DataBase.workFromDB import DB  # Импортируем работу с базой данных
+
+
 #  Импорт всех нужных библиотек, стилей
 
 
@@ -39,7 +41,7 @@ class TableWidget(QtWidgets.QTableWidget):  # Основная таблица с
             elif event.button() == QtCore.Qt.LeftButton:
                 try:
                     if self.root.c == 1:
-                        self.fname, _ = QtWidgets.QFileDialog.\
+                        self.fname, _ = QtWidgets.QFileDialog. \
                             getOpenFileName(self, 'Открыть изображение товара',
                                             filter='Файлы изображений (*.png *.jpg *.bmp)')
                         if self.fname != '':
@@ -80,8 +82,12 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.tableWidget = TableWidget(self)  # Создаем таблицу
         self.tableWidgetForTrans = TableWidgetForTrans(self)
         self.label = QtWidgets.QLabel(self)  # Создаем лейбл(для текста)
+        self.title_second_table = QtWidgets.QLabel(self)
+        self.title_first_table = QtWidgets.QLabel(self)
+        self.all = QtWidgets.QLabel(self)
         self.warning = QtWidgets.QLabel(self)
         self.font = QtGui.QFont()  # Создаем объект шрифта
+        self.all.setText('Итоговая сумма: ')
 
         self.shop()  # Вызов метода с основной работой
 
@@ -92,6 +98,7 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.buttonForCreateTransaction.clicked.connect(self.transaction)
         self.buttonForAddProduct.clicked.connect(self.openAddProductWindow)
         self.buttonPurchases.clicked.connect(self.buy)
+        self.buttonPurchases.setEnabled(False)
         self.tableWidget.cellChanged.connect(self.updateProduct)
         self.lineEditForSearch.textChanged.connect(self.updateTable)
 
@@ -102,7 +109,7 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.buttonForAddProduct.setText("Добавить продукт")
         # Изменяем геометрию кнопки для создания продукта
         self.buttonForCreateTransaction.resize(130, 28)
-        self.buttonForCreateTransaction.setText("Провести транзакцию")
+        self.buttonForCreateTransaction.setText("В чек")
         self.buttonPurchases.setText('Купить')
         self.buttonPurchases.adjustSize()
         self.buttonPurchases.resize(self.buttonPurchases.width(), 30)
@@ -134,6 +141,10 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.warning.hide()
         self.label.setText("Поиск продукта:")
         self.font.setFamily("Roboto Light")  # Изменяем семейство шрифта
+        self.title_second_table.setText('Позиции')
+        self.title_second_table.adjustSize()
+        self.title_first_table.setText('Чек')
+        self.title_first_table.adjustSize()
         self.updateTable()  # Запускаем функцию обновления таблицы
         self.checkError()
 
@@ -159,8 +170,8 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
                 for i in range(len(self.listWarning)):
                     if int(self.tableWidget.item(self.listWarning[i - count][0],
                                                  self.listWarning[i - count][1] - 1).text()) < int(
-                            self.tableWidget.item(self.listWarning[i - count][0],
-                                                  self.listWarning[i - count][1]).text()) \
+                        self.tableWidget.item(self.listWarning[i - count][0],
+                                              self.listWarning[i - count][1]).text()) \
                             or int(self.tableWidget.item(self.listWarning[i - count][0],
                                                          self.listWarning[i - count][1]).text()) < 0:
                         self.font.setBold(True)  # Изменяем ширину шрифта
@@ -251,14 +262,19 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         count = self.tableWidget.item(row, 5).text()
         required = self.tableWidget.item(row, 6).text()
         self.db.updateProduct(id_product, brand, name, price, count, required)
+        if required != 0:
+            self.transaction()
 
     def transaction(self):  # Проведение транзакции
         spisok = []
+        self.buttonPurchases.setEnabled(True)
         self.tableWidgetForTrans.setRowCount(0)
         result = self.db.getTransactions()
+        allPrice = 0
         for k in range(len(result)):
             name = result[k][2] + ' ' + result[k][3] + ' в количестве ' + str(result[k][6]) + ' по цене ' \
                    + str(result[k][6] * result[k][4])
+            allPrice += result[k][6] * result[k][4]
             spisok.append((name, ''))
         for i, row in enumerate(spisok):
             self.tableWidgetForTrans.setRowCount(
@@ -268,6 +284,8 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
                 if str(j) in '0':
                     s.setFlags(QtCore.Qt.ItemIsEditable)
                 self.tableWidgetForTrans.setItem(i, j, s)
+        self.all.setText('Итоговая сумма: ' + str(allPrice))
+        self.all.adjustSize()
 
     def buy(self):  # Покупка товаров
         for i in range(self.tableWidgetForTrans.rowCount()):
@@ -275,6 +293,9 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
             self.db.buyProduct(transactions, self.login)
         self.db.resetProductRequired()
         self.tableWidgetForTrans.setRowCount(0)
+        self.all.setText('Итоговая сумма: ')
+        self.all.adjustSize()
+
         self.updateTable()
 
     def resizeEvent(self, event):  # Макрос от pyqt срабатывающий при изменении ширины/длины окна
@@ -291,9 +312,18 @@ class shopWindow(QtWidgets.QWidget):  # Окно магазина
         self.buttonForCreateTransaction.move(self.width() // 2 - self.buttonForCreateTransaction.width() // 2 + 200, 30)
         self.label.setGeometry(QtCore.QRect(self.tableWidget.x(), 80, 120, 20))
         self.tableWidgetForTrans.resize(self.tableWidget.x() - 40, self.height() - (self.height() // 100 * 5) -
-                                        self.tableWidget.y() + 20)
+                                        self.tableWidget.y() + 20 - 60)
         self.tableWidgetForTrans.move(20, self.tableWidget.y())
-        self.buttonPurchases.move(self.tableWidgetForTrans.width() // 2 - self.tableWidgetForTrans.x(), 30)
+        self.buttonPurchases.move(self.tableWidgetForTrans.x() + self.tableWidgetForTrans.width() * 0.7,
+                                  self.tableWidgetForTrans.y() + self.tableWidgetForTrans.height() + 10)
+        self.title_second_table.move(
+            self.tableWidget.x() + self.tableWidget.width() // 2 - self.title_second_table.width() // 2,
+            self.buttonForCreateTransaction.y() + 32)
+        self.title_first_table.move(self.tableWidgetForTrans.x() + self.tableWidgetForTrans.width() // 2
+                                    - self.title_first_table.width() // 2,
+                                    self.title_second_table.y())
+        self.all.move(self.tableWidgetForTrans.x(), self.tableWidgetForTrans.y() + self.tableWidgetForTrans.height()
+                      + 10)
 
     def closeEvent(self, event):
         self.db.closeConnection()

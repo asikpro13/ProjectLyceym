@@ -24,6 +24,8 @@ class LK_window(QtWidgets.QDialog):
         self.purchases = QtWidgets.QLabel(self)
         self.money = QtWidgets.QLabel(self)
         self.counterProducts = QtWidgets.QLabel(self)
+        self.statsCheque = QtWidgets.QLabel(self)
+        self.stats = QtWidgets.QLabel(self)
         self.moneyValue = QtWidgets.QLabel(self)
         self.purchasesValue = QtWidgets.QLabel(self)
         self.userLoginValue = QtWidgets.QLabel(self)
@@ -31,15 +33,17 @@ class LK_window(QtWidgets.QDialog):
         self.comboBox = QtWidgets.QComboBox(self)
         self.pushButton = QtWidgets.QPushButton(self)
         if self.root.id == "0":  # Фото в лк зависит от должности
-            self.pix = QtGui.QPixmap('../Image/imageForUser.png').scaled(150, 150)
+            self.pix = QtGui.QPixmap('Image/imageForUser.png').scaled(150, 150)
         else:
-            self.pix = QtGui.QPixmap('../Image/imageForAdmin.png').scaled(150, 150)
+            self.pix = QtGui.QPixmap('Image/imageForAdmin.png').scaled(150, 150)
         # Создаем все объекты
         self.setupUi()
 
-        if self.id == '0':  # Скрываем кнопки от кассира для начзначения администраторов
+        if self.id == '0':  # Скрываем кнопки от пользователя для назначения администраторов
             self.comboBox.hide()
             self.pushButton.hide()
+            self.statsCheque.hide()
+            self.stats.hide()
 
         self.pushButton.clicked.connect(self.setAdmin)
         # Коннектим все сигналы
@@ -96,6 +100,15 @@ class LK_window(QtWidgets.QDialog):
                                        self.counterProductsValue.width() // 2, 220)
         self.counterProductsValue.setFont(font)
         self.counterProductsValue.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.statsCheque.setText('Средняя стоимость покупки:')
+        self.statsCheque.adjustSize()
+        self.statsCheque.move(self.counterProducts.x() + self.counterProducts.width() // 2 -
+                              self.statsCheque.width() // 2, 240)
+        self.stats.setText(str(self.db.getCheque()))
+        self.stats.setFont(font)
+        self.stats.adjustSize()
+        self.stats.move(self.statsCheque.x() + self.statsCheque.width() // 2 -
+                        self.stats.width() // 2, 260)
         users = self.db.getUsers()
         for i in range(len(users)):
             self.comboBox.addItem(users[i][0])

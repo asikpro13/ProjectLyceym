@@ -74,7 +74,7 @@ class Main_Auth(QWidget):  # Главное окно с которого нач�
         self.AuthWind.show()
 
     def showWindowRegistration(self):  # функция для показа окна регистрации
-        self.RegistrWind = RegistrationWindow(self)  # ->
+        self.RegistrWind = RegistrationWindow(self)
         self.RegistrWind.show()
     # Объявляем функции для показа окон
 

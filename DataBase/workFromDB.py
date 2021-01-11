@@ -3,11 +3,9 @@ import os
 import shutil
 
 
-#  Импорт всех нужных библиотек, стилей
-
 class DB:  # Класс для работы с базой данных
     def __init__(self):
-        self.connect = sqlite3.connect('../DataBase/auth.db')  # Создаем соединение
+        self.connect = sqlite3.connect('DataBase/auth.db')  # Создаем соединение
         self.cur = self.connect.cursor()  # Создаем курсор
 
     def auth(self, login, password):
@@ -21,7 +19,7 @@ class DB:  # Класс для работы с базой данных
             brand = 'None'
         if len(model) == 0:
             model = 'None'
-        name = '../Image/DBImage/' + path[path.rfind('/') + 1:]
+        name = 'Image/DBImage/' + path[path.rfind('/') + 1:]
         self.cur.execute('INSERT INTO product (product_photo, product_brand, product_name, product_price,'
                          ' product_count, product_required) VALUES (?, ?, ?, ?, ?, ?)',
                          (name, brand, model, price, count, 0,))
@@ -59,6 +57,7 @@ class DB:  # Класс для работы с базой данных
         self.cur.execute('update Auth set purchases = purchases + 1, money = money + ?,'
                          ' counterProducts = counterProducts + ? where login = ?',
                          (float(transactions[7]), int(transactions[4]), login,))
+        self.cur.execute('insert INTO cheque (price) VALUES (?)', (transactions[7],))
         self.commitConnection()
 
     def findTableRequest(self, text):  # Поиск по таблице
@@ -69,7 +68,7 @@ class DB:  # Класс для работы с базой данных
     def updateProductPhoto(self, product_id, path):  # Обновление фотографии
         self.delPhoto(product_id)
         self.savePhoto(path)
-        path = '../Image/DBImage/' + path[path.rfind('/') + 1:]
+        path = 'Image/DBImage/' + path[path.rfind('/') + 1:]
         self.cur.execute('update product set product_photo = ? where product_id = ?', (path, product_id))
         self.commitConnection()
 
@@ -93,10 +92,17 @@ class DB:  # Класс для работы с базой данных
         except PermissionError:
             pass
 
+    def getCheque(self):
+        cheque = self.cur.execute('select * from cheque').fetchall()
+        s = 0
+        for i in range(len(cheque)):
+            s += float(cheque[i][0])
+        return s // len(cheque)
+
     @staticmethod
     def savePhoto(path):  # Сохранить фото в папку с приложением
         try:
-            shutil.copy(path, '../Image/DBImage/')
+            shutil.copy(path, 'Image/DBImage/')
         except FileNotFoundError:
             pass
         except shutil.SameFileError:
